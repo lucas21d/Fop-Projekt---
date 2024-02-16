@@ -7,3 +7,4 @@ Beachten Sie die Hinweise zum Herunterladen, Importieren, Bearbeitern, Exportier
 # Gruppenmitglieder:
 - Diego Lucas Untiveros Craveiro
 - Jakob Schatz
+- Maximilian Holzkämper
