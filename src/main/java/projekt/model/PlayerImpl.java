@@ -6,6 +6,8 @@ import org.jetbrains.annotations.Nullable;
 import org.tudalgo.algoutils.student.annotation.DoNotTouch;
 import org.tudalgo.algoutils.student.annotation.StudentImplementationRequired;
 import projekt.Config;
+import projekt.model.buildings.Edge;
+import projekt.model.buildings.Port;
 import projekt.model.buildings.Settlement;
 
 import java.util.Collections;
@@ -89,7 +91,7 @@ public class PlayerImpl implements Player {
     @Override
     @StudentImplementationRequired("H1.1")
     public void addResources(final Map<ResourceType, Integer> resources) {
-        for (Map.Entry<ResourceType, Integer> entry: resources.entrySet()) {
+        for (Map.Entry<ResourceType, Integer> entry : resources.entrySet()) {
             addResource(entry.getKey(), entry.getValue());
         }
     }
@@ -97,7 +99,7 @@ public class PlayerImpl implements Player {
     @Override
     @StudentImplementationRequired("H1.1")
     public boolean hasResources(final Map<ResourceType, Integer> resources) {
-        for (Map.Entry<ResourceType, Integer> entry: resources.entrySet()) {
+        for (Map.Entry<ResourceType, Integer> entry : resources.entrySet()) {
             if (!hasResource(entry.getKey(), entry.getValue())) {
                 return false;
             }
@@ -125,11 +127,10 @@ public class PlayerImpl implements Player {
     @Override
     @StudentImplementationRequired("H1.1")
     public boolean removeResources(final Map<ResourceType, Integer> resources) {
-        // TODO: H1.1
         if (!hasResources(resources)) {
             return false;
         }
-        for (Map.Entry<ResourceType, Integer> entry: resources.entrySet()) {
+        for (Map.Entry<ResourceType, Integer> entry : resources.entrySet()) {
             removeResource(entry.getKey(), entry.getValue());
         }
         return true;
@@ -138,8 +139,24 @@ public class PlayerImpl implements Player {
     @Override
     @StudentImplementationRequired("H1.1")
     public int getTradeRatio(final ResourceType resourceType) {
-        // TODO: H1.1
-        return org.tudalgo.algoutils.student.Student.crash("H1.1 - Remove if implemented");
+        final int SPEZIAL_PORT_RATIO = 2;
+        final int ANY_PORT_RATIO = 3;
+        final int NO_PORT_RATIO = 4;
+
+        boolean hasAnyPort = false;
+        for (Edge road : getRoads().values()) {
+            if (!road.hasPort()) {
+                continue;
+            }
+            hasAnyPort = true;
+            if (road.getPort().resourceType().equals(resourceType)) {
+                return SPEZIAL_PORT_RATIO;
+            }
+        }
+        if (hasAnyPort) {
+            return ANY_PORT_RATIO;
+        }
+        return NO_PORT_RATIO;
     }
 
     @Override
@@ -236,13 +253,13 @@ public class PlayerImpl implements Player {
          */
         public Builder color(final Color playerColor) {
             this.color = playerColor == null
-                         ? new Color(
+                ? new Color(
                 Config.RANDOM.nextDouble(),
                 Config.RANDOM.nextDouble(),
                 Config.RANDOM.nextDouble(),
                 1
             )
-                         : playerColor;
+                : playerColor;
             return this;
         }
 
