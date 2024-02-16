@@ -8,6 +8,7 @@ import org.tudalgo.algoutils.student.annotation.StudentImplementationRequired;
 import projekt.Config;
 import projekt.model.buildings.Settlement;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -75,29 +76,38 @@ public class PlayerImpl implements Player {
     @Override
     @StudentImplementationRequired("H1.1")
     public Map<ResourceType, Integer> getResources() {
-        // TODO: H1.1
-        return org.tudalgo.algoutils.student.Student.crash("H1.1 - Remove if implemented");
+        return Collections.unmodifiableMap(resources);
     }
 
     @Override
     @StudentImplementationRequired("H1.1")
     public void addResource(final ResourceType resourceType, final int amount) {
-        // TODO: H1.1
-        org.tudalgo.algoutils.student.Student.crash("H1.1 - Remove if implemented");
+        int currentAmount = resources.getOrDefault(resourceType, 0);
+        resources.put(resourceType, currentAmount + amount);
     }
 
     @Override
     @StudentImplementationRequired("H1.1")
     public void addResources(final Map<ResourceType, Integer> resources) {
-        // TODO: H1.1
-        org.tudalgo.algoutils.student.Student.crash("H1.1 - Remove if implemented");
+        for (Map.Entry<ResourceType, Integer> entry: resources.entrySet()) {
+            addResource(entry.getKey(), entry.getValue());
+        }
     }
 
     @Override
     @StudentImplementationRequired("H1.1")
     public boolean hasResources(final Map<ResourceType, Integer> resources) {
-        // TODO: H1.1
-        return org.tudalgo.algoutils.student.Student.crash("H1.1 - Remove if implemented");
+        for (Map.Entry<ResourceType, Integer> entry: resources.entrySet()) {
+            // check whether the player has that resource
+            if (this.resources.get(entry.getKey()) == null) {
+                return false;
+            }
+            // check if the player has enough of that resource
+            if (this.resources.get(entry.getKey()) < entry.getValue()) {
+                return false;
+            }
+        }
+        return true;
     }
 
     @Override
