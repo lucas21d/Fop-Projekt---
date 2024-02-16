@@ -98,30 +98,41 @@ public class PlayerImpl implements Player {
     @StudentImplementationRequired("H1.1")
     public boolean hasResources(final Map<ResourceType, Integer> resources) {
         for (Map.Entry<ResourceType, Integer> entry: resources.entrySet()) {
-            // check whether the player has that resource
-            if (this.resources.get(entry.getKey()) == null) {
-                return false;
-            }
-            // check if the player has enough of that resource
-            if (this.resources.get(entry.getKey()) < entry.getValue()) {
+            if (!hasResource(entry.getKey(), entry.getValue())) {
                 return false;
             }
         }
         return true;
     }
 
+    private boolean hasResource(ResourceType resourceType, int amount) {
+        if (this.resources.get(resourceType) == null) {
+            return false;
+        }
+        return this.resources.get(resourceType) >= amount;
+    }
+
     @Override
     @StudentImplementationRequired("H1.1")
     public boolean removeResource(final ResourceType resourceType, final int amount) {
-        // TODO: H1.1
-        return org.tudalgo.algoutils.student.Student.crash("H1.1 - Remove if implemented");
+        if (!hasResource(resourceType, amount)) {
+            return false;
+        }
+        this.resources.put(resourceType, this.resources.get(resourceType) - amount);
+        return true;
     }
 
     @Override
     @StudentImplementationRequired("H1.1")
     public boolean removeResources(final Map<ResourceType, Integer> resources) {
         // TODO: H1.1
-        return org.tudalgo.algoutils.student.Student.crash("H1.1 - Remove if implemented");
+        if (!hasResources(resources)) {
+            return false;
+        }
+        for (Map.Entry<ResourceType, Integer> entry: resources.entrySet()) {
+            removeResource(entry.getKey(), entry.getValue());
+        }
+        return true;
     }
 
     @Override
