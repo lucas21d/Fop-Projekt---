@@ -7,16 +7,13 @@ import org.tudalgo.algoutils.student.annotation.DoNotTouch;
 import org.tudalgo.algoutils.student.annotation.StudentImplementationRequired;
 import projekt.Config;
 import projekt.model.buildings.Edge;
-import projekt.model.buildings.Port;
 import projekt.model.buildings.Settlement;
 
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import static projekt.Config.MAX_CITIES;
-import static projekt.Config.MAX_ROADS;
-import static projekt.Config.MAX_VILLAGES;
+import static projekt.Config.*;
 
 /**
  * Default implementation of {@link Player}.
