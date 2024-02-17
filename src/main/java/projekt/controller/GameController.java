@@ -7,6 +7,7 @@ import javafx.beans.property.SimpleObjectProperty;
 import org.tudalgo.algoutils.student.annotation.DoNotTouch;
 import org.tudalgo.algoutils.student.annotation.StudentImplementationRequired;
 import projekt.Config;
+import projekt.controller.actions.EndTurnAction;
 import projekt.model.DevelopmentCardType;
 import projekt.model.GameState;
 import projekt.model.HexGridImpl;
@@ -22,6 +23,8 @@ import java.util.Set;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+
+import static projekt.controller.PlayerObjective.*;
 
 /**
  * The GameController class represents the controller for the game logic.
@@ -276,7 +279,7 @@ public class GameController {
     public void withActivePlayer(final PlayerController pc, final Runnable r) {
         activePlayerControllerProperty.setValue(pc);
         r.run();
-        pc.setPlayerObjective(PlayerObjective.IDLE);
+        pc.setPlayerObjective(IDLE);
         activePlayerControllerProperty.setValue(null);
     }
 
@@ -286,8 +289,9 @@ public class GameController {
      */
     @StudentImplementationRequired("H2.1")
     private void regularTurn() {
-        // TODO: H2.1
-        org.tudalgo.algoutils.student.Student.crash("H2.1 - Remove if implemented");
+        while (getActivePlayerController()
+            .waitForNextAction(REGULAR_TURN)
+            instanceof EndTurnAction);
     }
 
     /**
@@ -297,8 +301,22 @@ public class GameController {
      */
     @StudentImplementationRequired("H2.1")
     private void firstRound() {
-        // TODO: H2.1
-        org.tudalgo.algoutils.student.Student.crash("H2.1 - Remove if implemented");
+        playerControllers
+            .values()
+            .forEach(this::firstActions);
+    }
+
+    /**
+     * Initiates the actions for the specified playerController at the beginning of the game
+     * @param playerController The playerController which executes the actions
+     */
+    private void firstActions(PlayerController playerController) {
+        playerController.waitForNextAction(PLACE_VILLAGE);
+        playerController.waitForNextAction(PLACE_ROAD);
+        playerController.waitForNextAction(PLACE_VILLAGE);
+        playerController.waitForNextAction(PLACE_ROAD);
+
+        playerController.setPlayerObjective(IDLE);
     }
 
     /**
@@ -327,8 +345,39 @@ public class GameController {
      */
     @StudentImplementationRequired("H2.1")
     private void diceRollSeven() {
-        // TODO: H2.1
-        org.tudalgo.algoutils.student.Student.crash("H2.1 - Remove if implemented");
+        //TODO - not sure if activePlayerController is changed when calling action for another playerController: if yes then activePlayerController needs to be stored and set after iteration, if no ignore
+        getState()
+            .getPlayers()
+            .forEach(this::diceRollSevenPlayerAction);
+
+        getActivePlayerController().waitForNextAction(SELECT_ROBBER_TILE);
+        getActivePlayerController().waitForNextAction(SELECT_CARD_TO_STEAL);
+    }
+
+    /**
+     * Triggered for each player when a seven is rolled.
+     * Checks if the player has more than seven resources and executes DROP_CARDS action if needed.
+     * @param player The player for which the check is run.
+     */
+    private void diceRollSevenPlayerAction(Player player) {
+        if (getTotalNumberOfResources(player) <= 7) return;
+
+        playerControllers
+            .get(player)
+            .waitForNextAction(DROP_CARDS);
+    }
+
+    /**
+     * Calculates the total number of resources a given player has.
+     * @return the total number of resources a given player has
+     */
+    private int getTotalNumberOfResources(Player player) {
+        return player
+            .getResources()
+            .values()
+            .stream()
+            .mapToInt(Integer::intValue)
+            .sum();
     }
 
     /**
