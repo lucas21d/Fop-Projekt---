@@ -303,20 +303,19 @@ public class GameController {
     private void firstRound() {
         playerControllers
             .values()
-            .forEach(this::firstActions);
+            .forEach(value -> withActivePlayer(value, this::firstActions));
     }
 
     /**
-     * Initiates the actions for the specified playerController at the beginning of the game
-     * @param playerController The playerController which executes the actions
+     * Initiates the actions for the activePlayerController at the beginning of the game
      */
-    private void firstActions(PlayerController playerController) {
-        playerController.waitForNextAction(PLACE_VILLAGE);
-        playerController.waitForNextAction(PLACE_ROAD);
-        playerController.waitForNextAction(PLACE_VILLAGE);
-        playerController.waitForNextAction(PLACE_ROAD);
+    private void firstActions() {
+        if (getActivePlayerController() == null) return;
 
-        playerController.setPlayerObjective(IDLE);
+        for (int i = 0; i < 2; i++) {
+            getActivePlayerController().waitForNextAction(PLACE_VILLAGE);
+            getActivePlayerController().waitForNextAction(PLACE_ROAD);
+        }
     }
 
     /**
@@ -345,13 +344,13 @@ public class GameController {
      */
     @StudentImplementationRequired("H2.1")
     private void diceRollSeven() {
-        //TODO - not sure if activePlayerController is changed when calling action for another playerController: if yes then activePlayerController needs to be stored and set after iteration, if no ignore
+        PlayerController roller = getActivePlayerController();
+
         getState()
             .getPlayers()
             .forEach(this::diceRollSevenPlayerAction);
 
-        getActivePlayerController().waitForNextAction(SELECT_ROBBER_TILE);
-        getActivePlayerController().waitForNextAction(SELECT_CARD_TO_STEAL);
+        withActivePlayer(roller,this::moveRobber);
     }
 
     /**
@@ -362,9 +361,10 @@ public class GameController {
     private void diceRollSevenPlayerAction(Player player) {
         if (getTotalNumberOfResources(player) <= 7) return;
 
-        playerControllers
-            .get(player)
-            .waitForNextAction(DROP_CARDS);
+        withActivePlayer(
+            playerControllers
+                .get(player),
+            () -> getActivePlayerController().waitForNextAction(DROP_CARDS));
     }
 
     /**
@@ -378,6 +378,16 @@ public class GameController {
             .stream()
             .mapToInt(Integer::intValue)
             .sum();
+    }
+
+    /**
+     * Allows the active playerController to move the robber and steal a card another player
+     */
+    private void moveRobber() {
+        if (getActivePlayerController() == null) return;
+
+        getActivePlayerController().waitForNextAction(SELECT_ROBBER_TILE);
+        getActivePlayerController().waitForNextAction(SELECT_CARD_TO_STEAL);
     }
 
     /**
