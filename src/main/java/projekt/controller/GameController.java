@@ -13,6 +13,7 @@ import projekt.model.GameState;
 import projekt.model.HexGridImpl;
 import projekt.model.Player;
 import projekt.model.ResourceType;
+import projekt.model.buildings.Settlement;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -387,7 +388,13 @@ public class GameController {
      */
     @StudentImplementationRequired("H2.2")
     public void distributeResources(final int diceRoll) {
-        // TODO: H2.2
-        org.tudalgo.algoutils.student.Student.crash("H2.2 - Remove if implemented");
+        // TODO: H2.2 check, done
+
+        activePlayerControllerProperty.getValue().getPlayer().getHexGrid().getTiles(diceRoll).stream().filter(x->{return !(x.hasRobber());}).forEach(x->{
+            x.getSettlements().stream().forEach(y->{ if(y.type().equals( Settlement.Type.CITY)){ y.owner().addResource(x.getType().resourceType, 2);}else{y.owner().addResource(x.getType().resourceType, 1);} } );
+        }
+        );
+
+
     }
 }
