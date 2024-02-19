@@ -7,6 +7,9 @@ import javafx.beans.property.SimpleObjectProperty;
 import org.tudalgo.algoutils.student.annotation.DoNotTouch;
 import org.tudalgo.algoutils.student.annotation.StudentImplementationRequired;
 import projekt.Config;
+import projekt.controller.actions.AcceptTradeAction;
+import projekt.controller.actions.IllegalActionException;
+import projekt.controller.actions.PlayerAction;
 import projekt.model.DevelopmentCardType;
 import projekt.model.GameState;
 import projekt.model.HexGridImpl;
@@ -314,8 +317,28 @@ public class GameController {
         final Player offeringPlayer, final Map<ResourceType, Integer> offer,
         final Map<ResourceType, Integer> request
     ) {
-        // TODO: H2.3
-        org.tudalgo.algoutils.student.Student.crash("H2.3 - Remove if implemented");
+        // offer trade to all players
+        for (PlayerController playerController: playerControllers.values()) {
+            if (!playerController.canAcceptTradeOffer(offeringPlayer, offer)) {
+                continue;
+            }
+
+            playerController.setPlayerTradeOffer(offeringPlayer, offer, request);
+            // read action from the player
+            PlayerAction playerAction = playerController.waitForNextAction(PlayerObjective.ACCEPT_TRADE);
+            if (playerAction instanceof AcceptTradeAction tradeAction) {
+                try {
+                    // accept the offer and break, so that the other players don't receive the offer
+                    if (tradeAction.accepted()) {
+                        playerController.acceptTradeOffer(true);
+                        break;
+                    }
+                    playerController.resetPlayerTradeOffer();
+                } catch (IllegalActionException ignored) {
+                }
+            }
+        }
+        setActivePlayerControllerProperty(offeringPlayer);
     }
 
     /**

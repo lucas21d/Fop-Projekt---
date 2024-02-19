@@ -560,8 +560,21 @@ public class PlayerController {
     @StudentImplementationRequired("H2.3")
     public void tradeWithBank(final ResourceType offerType, final int offerAmount, final ResourceType request)
     throws IllegalActionException {
-        // TODO: H2.3
-        org.tudalgo.algoutils.student.Student.crash("H2.3 - Remove if implemented");
+        int tradeRatio = player.getTradeRatio(request);
+        // the offered amount doesn't match the ratio, e.g., player offers 5, and his trade ratio is 4.
+        if ((offerAmount % player.getTradeRatio(request)) != 0) {
+           throw new IllegalActionException("Offered amount and trade ratio doesn't match");
+        }
+
+        Map<ResourceType, Integer> offerMap = new HashMap<>();
+        offerMap.put(offerType, offerAmount);
+        if (!player.hasResources(offerMap)) {
+            throw new IllegalActionException("Player does not have the offered resources");
+        }
+
+        int numOfResourcesToReceive = offerAmount/tradeRatio;
+        player.removeResources(offerMap);
+        player.addResource(request, numOfResourcesToReceive);
     }
 
     /**
