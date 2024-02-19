@@ -290,9 +290,10 @@ public class GameController {
      */
     @StudentImplementationRequired("H2.1")
     private void regularTurn() {
-        while (getActivePlayerController()
+        //Ignore warning
+        while (!(getActivePlayerController()
             .waitForNextAction(REGULAR_TURN)
-            instanceof EndTurnAction);
+            instanceof EndTurnAction));
     }
 
     /**
