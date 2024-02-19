@@ -3,16 +3,17 @@ package projekt.view.menus;
 import javafx.collections.ObservableList;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import org.jetbrains.annotations.NotNull;
 import org.tudalgo.algoutils.student.annotation.DoNotTouch;
 import org.tudalgo.algoutils.student.annotation.StudentImplementationRequired;
 import projekt.model.PlayerImpl;
 import projekt.model.PlayerImpl.Builder;
 
+import java.util.List;
 import java.util.function.Supplier;
 
 /**
@@ -99,8 +100,9 @@ public class CreateGameBuilder extends MenuBuilder {
      */
     @StudentImplementationRequired("H3.4")
     private Node createAddPlayerButton() {
-        // TODO: H3.4
-        return org.tudalgo.algoutils.student.Student.crash("H3.4 - Remove if implemented");
+        Button addPlayerButton = new Button("Add player");
+        addPlayerButton.setOnAction(event -> observablePlayers.add(nextPlayerBuilder()));
+        return addPlayerButton;
     }
 
     /**
@@ -113,9 +115,32 @@ public class CreateGameBuilder extends MenuBuilder {
      */
     @StudentImplementationRequired("H3.4")
     private Node createPlayerColorPicker(final Builder playerBuilder) {
-        // TODO: H3.4
-        return org.tudalgo.algoutils.student.Student.crash("H3.4 - Remove if implemented");
+        ColorPicker colorPicker = new ColorPicker();
+        colorPicker.setOnAction(event -> {
+            Color colorPicked = colorPicker.getValue();
+            List<Color> alreadyUsedColors = observablePlayers.stream().map(Builder::getColor).toList();
+            if (alreadyUsedColors.contains(colorPicked)) {
+                alertColorAlreadyPicked().showAndWait();
+            } else {
+                playerBuilder.color(colorPicked);
+            }
+        });
+        return colorPicker;
     }
+
+    /**
+     * Creates an alert for when the color selected is already in use.
+     * @return alert created.
+     */
+    @NotNull
+    private static Alert alertColorAlreadyPicked() {
+        Alert alertColorAlreadyPicked = new Alert(Alert.AlertType.ERROR);
+        alertColorAlreadyPicked.setTitle("Error: Color already picked");
+        alertColorAlreadyPicked.setHeaderText("Color already picked");
+        alertColorAlreadyPicked.setContentText("The color you have selected has already been picked. Please choose another color");
+        return alertColorAlreadyPicked;
+    }
+
 
     /**
      * Creates a node to select whether the player is a bot or not.
@@ -137,8 +162,9 @@ public class CreateGameBuilder extends MenuBuilder {
      */
     @StudentImplementationRequired("H3.4")
     private Button createRemovePlayerButton(final int id) {
-        // TODO: H3.4
-        return org.tudalgo.algoutils.student.Student.crash("H3.4 - Remove if implemented");
+        Button removePlayerButton = new Button("Remove player");
+        removePlayerButton.setOnAction(event -> removePlayer(id));
+        return removePlayerButton;
     }
 
     /**
@@ -149,8 +175,11 @@ public class CreateGameBuilder extends MenuBuilder {
      */
     @StudentImplementationRequired("H3.4")
     private void removePlayer(final int id) {
-        // TODO: H3.4
-        org.tudalgo.algoutils.student.Student.crash("H3.4 - Remove if implemented");
+        observablePlayers.removeIf(player -> player.getId() == id);
+        int playerId = 0;
+        for (PlayerImpl.Builder player : observablePlayers) {
+            player.id(playerId++);
+        }
     }
 
     /**
