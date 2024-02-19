@@ -8,6 +8,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import org.jetbrains.annotations.NotNull;
+import org.tudalgo.algoutils.student.Student;
 import org.tudalgo.algoutils.student.annotation.DoNotTouch;
 import org.tudalgo.algoutils.student.annotation.StudentImplementationRequired;
 import projekt.model.PlayerImpl;
@@ -72,6 +73,9 @@ public class CreateGameBuilder extends MenuBuilder {
                     playerNameTextField
                 );
                 playerListVBox.getChildren().add(playerListingHBox);
+                playerListVBox.getChildren().add(createRemovePlayerButton(playerBuilder.getId())); // added
+                playerListVBox.getChildren().add(createPlayerColorPicker(playerBuilder)); // added
+                playerListVBox.getChildren().add(createBotOrPlayerSelector(playerBuilder)); // added
             }
         });
 
@@ -86,7 +90,8 @@ public class CreateGameBuilder extends MenuBuilder {
         mainBox.getChildren().addAll(
             playerListVBox,
             startGameButton,
-            startGameErrorLabel
+            startGameErrorLabel,
+            createAddPlayerButton() // added
         );
         mainBox.alignmentProperty().set(Pos.TOP_CENTER);
         return mainBox;
@@ -150,8 +155,12 @@ public class CreateGameBuilder extends MenuBuilder {
      */
     @StudentImplementationRequired("H3.4")
     private Node createBotOrPlayerSelector(final Builder playerBuilder) {
-        // TODO: H3.4
-        return org.tudalgo.algoutils.student.Student.crash("H3.4 - Remove if implemented");
+        CheckBox checkboxBotSelected = new CheckBox("is bot?");
+        checkboxBotSelected.setSelected(playerBuilder.isAi());
+        checkboxBotSelected.setOnAction(check -> {
+            playerBuilder.ai(checkboxBotSelected.isSelected());
+        });
+        return checkboxBotSelected;
     }
 
     /**
