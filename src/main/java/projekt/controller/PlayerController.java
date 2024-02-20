@@ -415,10 +415,15 @@ public class PlayerController {
      * @param intersection the intersection to upgrade the village at
      * @throws IllegalActionException if the village cannot be upgraded
      */
-    @StudentImplementationRequired("H2.6")
+    @StudentImplementationRequired("H2.5")
     public void upgradeVillage(final Intersection intersection) throws IllegalActionException {
-        // TODO: H2.5
-        org.tudalgo.algoutils.student.Student.crash("H2.6 - Remove if implemented");
+        if (!canUpgradeVillage())
+            throw new IllegalActionException("Error: The current player does not have enough resources to upgrade their village to a city!.");
+        if (!intersection.upgradeSettlement(player))
+            throw new IllegalActionException("Error:T This village cannot be upgraded!");
+
+        intersection.upgradeSettlement(player);
+        player.removeResources(Config.SETTLEMENT_BUILDING_COST.get(Settlement.Type.CITY));
     }
 
     /**
