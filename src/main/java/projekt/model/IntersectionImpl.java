@@ -13,6 +13,8 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static projekt.model.buildings.Settlement.Type.*;
+
 /**
  * Default implementation of {@link Intersection}.
  */
@@ -85,15 +87,21 @@ public class IntersectionImpl implements Intersection {
     @Override
     @StudentImplementationRequired("H1.4")
     public boolean placeVillage(final Player player, final boolean ignoreRoadCheck) {
-        // TODO: H1.4
-        return org.tudalgo.algoutils.student.Student.crash("H1.4 - Remove if implemented");
+        if (hasSettlement() || (!ignoreRoadCheck && !playerHasConnectedRoad(player))) return false;
+
+        settlement = new Settlement(player, VILLAGE, this);
+
+        return true;
     }
 
     @Override
     @StudentImplementationRequired("H1.4")
-    public boolean upgradeSettlement(final Player player) {
-        // TODO: H1.4
-        return org.tudalgo.algoutils.student.Student.crash("H1.4 - Remove if implemented");
+    public boolean  upgradeSettlement(final Player player) {
+        if (!playerHasSettlement(player) || !settlement.type().equals(VILLAGE)) return false;
+
+        settlement = new Settlement(player, CITY, this);
+
+        return true;
     }
 
     @Override

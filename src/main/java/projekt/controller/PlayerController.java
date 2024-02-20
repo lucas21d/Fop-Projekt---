@@ -414,10 +414,15 @@ public class PlayerController {
      * @param intersection the intersection to upgrade the village at
      * @throws IllegalActionException if the village cannot be upgraded
      */
-    @StudentImplementationRequired("H2.6")
+    @StudentImplementationRequired("H2.5")
     public void upgradeVillage(final Intersection intersection) throws IllegalActionException {
-        // TODO: H2.5
-        org.tudalgo.algoutils.student.Student.crash("H2.6 - Remove if implemented");
+        if (!canUpgradeVillage())
+            throw new IllegalActionException("Error: The current player does not have enough resources to upgrade their village to a city!.");
+        if (!intersection.upgradeSettlement(player))
+            throw new IllegalActionException("Error:T This village cannot be upgraded!");
+
+        intersection.upgradeSettlement(player);
+        player.removeResources(Config.SETTLEMENT_BUILDING_COST.get(Settlement.Type.CITY));
     }
 
     /**
@@ -613,8 +618,21 @@ public class PlayerController {
     @StudentImplementationRequired("H2.3")
     public void tradeWithBank(final ResourceType offerType, final int offerAmount, final ResourceType request)
     throws IllegalActionException {
-        // TODO: H2.3
-        org.tudalgo.algoutils.student.Student.crash("H2.3 - Remove if implemented");
+        int tradeRatio = player.getTradeRatio(request);
+        // the offered amount doesn't match the ratio, e.g., player offers 5, and his trade ratio is 4.
+        if ((offerAmount % player.getTradeRatio(request)) != 0) {
+           throw new IllegalActionException("Offered amount and trade ratio doesn't match");
+        }
+
+        Map<ResourceType, Integer> offerMap = new HashMap<>();
+        offerMap.put(offerType, offerAmount);
+        if (!player.hasResources(offerMap)) {
+            throw new IllegalActionException("Player does not have the offered resources");
+        }
+
+        int numOfResourcesToReceive = offerAmount/tradeRatio;
+        player.removeResources(offerMap);
+        player.addResource(request, numOfResourcesToReceive);
     }
 
     /**
@@ -692,8 +710,29 @@ public class PlayerController {
      */
     @StudentImplementationRequired("H2.3")
     public void acceptTradeOffer(final boolean accepted) throws IllegalActionException {
-        // TODO: H2.3
-        org.tudalgo.algoutils.student.Student.crash("H2.3 - Remove if implemented");
+        // überprüfen, ob das Angebot existiert
+        if (playerTradingOffer == null) {
+            throw new IllegalActionException("No trade offer to accept");
+        }
+        if (!accepted) {
+            playerObjectiveProperty.setValue(PlayerObjective.IDLE);
+            return;
+        }
+
+        if (!player.hasResources(playerTradingRequest)) {
+            throw new IllegalActionException("Player does not have the requested resources");
+        }
+        if (!tradingPlayer.hasResources(playerTradingOffer)) {
+            throw new IllegalActionException("Other player does not have the offered resources");
+        }
+
+        player.removeResources(playerTradingRequest);
+        player.addResources(playerTradingOffer);
+
+        tradingPlayer.removeResources(playerTradingOffer);
+        tradingPlayer.addResources(playerTradingRequest);
+
+        playerObjectiveProperty.setValue(PlayerObjective.IDLE);
     }
 
     // Robber methods
