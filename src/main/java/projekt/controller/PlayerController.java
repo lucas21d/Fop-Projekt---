@@ -341,7 +341,9 @@ public class PlayerController {
         }else {
             //checks if player has all necessary  resources.
             Map<ResourceType,Integer> currentResources =this.getPlayer().getResources();
-            return (getPlayer().getRemainingVillages() > 0) && (currentResources.get(ResourceType.WOOD) > 1) && (currentResources.get(ResourceType.CLAY) > 1) && (currentResources.get(ResourceType.GRAIN) > 1) && (currentResources.get(ResourceType.WOOL) > 1);
+            return (getPlayer().getRemainingVillages() > 0) && currentResources.keySet().stream().allMatch(x->{
+                return (Config.SETTLEMENT_BUILDING_COST.get(Settlement.Type.VILLAGE) == null)? true: Config.SETTLEMENT_BUILDING_COST.get(Settlement.Type.VILLAGE).get(x) <= currentResources.get(x);
+            }) ;
         }
     }
 
@@ -357,7 +359,7 @@ public class PlayerController {
      */
     @StudentImplementationRequired("H2.5")
     public void buildVillage(final Intersection intersection) throws IllegalActionException {
-        // TODO: H2.4 check done
+        // TODO: H2.4 check done change
         if(intersection.hasSettlement()){ // checks if village is already built.
             throw new IllegalActionException("A village is already on Intersection");
         }
@@ -368,10 +370,7 @@ public class PlayerController {
             //conditions during the rest of the game.
             if(intersection.placeVillage(player,false)  ){
                 //create village at cost.
-                player.removeResource(ResourceType.WOOD,1);
-                player.removeResource(ResourceType.CLAY,1);
-                player.removeResource(ResourceType.GRAIN,1);
-                player.removeResource(ResourceType.WOOL,1);
+                player.removeResources(Config.SETTLEMENT_BUILDING_COST.get(Settlement.Type.VILLAGE));
             }else{
                 throw new IllegalActionException(" settlement placement failed(probably no adjacent owned roads)");
             }
@@ -463,7 +462,10 @@ public class PlayerController {
         }else {
             //checks if player has all necessary  resources.
             Map<ResourceType,Integer> currentResources =this.getPlayer().getResources();
-            return (getPlayer().getRemainingRoads() > 0) && (currentResources.get(ResourceType.WOOD) > 1) && (currentResources.get(ResourceType.CLAY) > 1) ;
+
+            return (getPlayer().getRemainingRoads() > 0)  && currentResources.keySet().stream().allMatch(x->{
+                return (Config.ROAD_BUILDING_COST.get(x) == null)? true: Config.ROAD_BUILDING_COST.get(x) <= currentResources.get(x);
+            }) ;
         }
     }
 
@@ -509,8 +511,7 @@ public class PlayerController {
             //conditions during the rest of the game.
             if(roadToBe.getIntersections().stream().anyMatch(x->(x.hasSettlement())? x.getSettlement().owner().equals(player):true &&(x.getConnectedEdges().stream().anyMatch(y->y.getRoadOwner().equals(player))))  ){
                 //create road at cost.
-                player.removeResource(ResourceType.WOOD,1);
-                player.removeResource(ResourceType.CLAY,1);
+                player.removeResources(Config.ROAD_BUILDING_COST); //removes the appropiate ammount of Resources.
                 roadToBe.getRoadOwnerProperty().setValue(player);   //builds road in 1st round for free.
             }else{
                 throw new IllegalActionException(" no adjacent and unblocked roads for the road");
