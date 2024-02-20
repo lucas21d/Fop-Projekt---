@@ -23,7 +23,9 @@ import java.util.Set;
  */
 public enum PlayerObjective {
     DROP_CARDS(Set.of(SelectCardsAction.class)),
+    // NEW
     SELECT_CARD_TO_STEAL(Set.of(StealCardAction.class, EndTurnAction.class)),
+    // NEW
     SELECT_ROBBER_TILE(Set.of(SelectRobberTileAction.class)),
     REGULAR_TURN(Set.of(BuildRoadAction.class, EndTurnAction.class, BuildVillageAction.class,
                         UpgradeVillageAction.class, TradeAction.class, BuyDevelopmentCardAction.class,
@@ -32,6 +34,7 @@ public enum PlayerObjective {
     PLACE_VILLAGE(Set.of(BuildVillageAction.class)),
     PLACE_ROAD(Set.of(BuildRoadAction.class)),
     DICE_ROLL(Set.of(RollDiceAction.class)),
+    // NEW
     ACCEPT_TRADE(Set.of(AcceptTradeAction.class)),
     SELECT_CARDS(Set.of(SelectCardsAction.class)),
     IDLE(Set.of());
