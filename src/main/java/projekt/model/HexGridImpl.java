@@ -226,8 +226,18 @@ public class HexGridImpl implements HexGrid {
     @Override
     @StudentImplementationRequired("H1.3")
     public Map<Set<TilePosition>, Edge> getRoads(final Player player) {
-        // TODO: H1.3
-        return org.tudalgo.algoutils.student.Student.crash("H1.3 - Remove if implemented");
+        // TODO: H1.3 check
+        Map<Set<TilePosition>, Edge> result = new HashMap<>();
+        edges.forEach((a,b)->{
+            if(b.getRoadOwner().equals(player)){
+                result.put(a,b);
+            }
+
+        });
+
+
+
+        return result;
     }
 
     @Override
@@ -242,8 +252,25 @@ public class HexGridImpl implements HexGrid {
         final TilePosition position0, final TilePosition position1, final Player player,
         final boolean checkVillages
     ) {
-        // TODO: H1.3
-        return org.tudalgo.algoutils.student.Student.crash("H1.3 - Remove if implemented");
+        // TODO: H1.3 check
+        Edge targetEdge =getEdge(position0,position1);
+        if (targetEdge.getRoadOwner() == null){//checks if already owned.
+            if (checkVillages)//village or adjacent road check.
+            {      //village nearby;
+                if (targetEdge.getIntersections().stream().map(a->{return (a.hasSettlement())? a.getSettlement().owner().equals(player):false;}).reduce((a,b)->(a||b)).orElse(false)){
+                    targetEdge.getRoadOwnerProperty().setValue(player);
+                }else{return false;}
+            }else{//road nearby check;
+                if (!targetEdge.getConnectedRoads(player).isEmpty()){
+                    targetEdge.getRoadOwnerProperty().setValue(player);
+                }else{return false;}
+            }
+        }else{return false;}
+
+
+
+
+        return true;
     }
 
     @Override
