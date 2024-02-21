@@ -60,12 +60,15 @@ public record EdgeImpl(
     public Set<Intersection> getIntersections() {
         Set<Intersection> result;
         // TODO: H1.3 better alternative solution is to get the overlapping Intersections of both Tiles(chose one way).
-        Set<Intersection> otherSet = grid.getTileAt(position2).getIntersections();
-        result = grid.getTileAt(position1).getIntersections().stream().filter(a->{return otherSet.stream().anyMatch(b->b.equals(a));}).collect(Collectors.toSet());
-
-
         /*
-        //The harder way
+        //funktioniert nicht weil es den fall gibt wo eine der TilePos auserhalb des Spielfelds ist und deshalb keine Tile hat.
+        Set<Intersection> otherSet = grid.getTileAt(position2).getIntersections();
+        result = grid.getTileAt(position1).getIntersections().stream().filter(a->{return otherSet.contains(a);}).collect(Collectors.toSet());
+        */
+
+
+
+        //The harder way and correct way(because of edge of board case)
 
         //prework
         int qDiff = position1.q() - position2.q();
@@ -89,7 +92,7 @@ public record EdgeImpl(
         result= new HashSet<>();
         result.add(grid.getIntersectionAt(position1,position2,adj1));
         result.add(grid.getIntersectionAt(position1,position2,adj2));
-         */
+
         return result;
 
     }
