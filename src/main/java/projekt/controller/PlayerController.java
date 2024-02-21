@@ -334,17 +334,13 @@ public class PlayerController {
      */
     @StudentImplementationRequired("H2.5")
     public boolean canBuildVillage() {
-        // TODO: H2.4 check done (maybe redo first round exeption)
+        // TODO: H2.4 check done
 
-        if(isFirstRound() && (player.getSettlements().size() <2)){
-            return true;    //first Round maybe more intricate.
-        }else {
-            //checks if player has all necessary  resources.
-            Map<ResourceType,Integer> currentResources =this.getPlayer().getResources();
-            return (getPlayer().getRemainingVillages() > 0) && currentResources.keySet().stream().allMatch(x->{
-                return (Config.SETTLEMENT_BUILDING_COST.get(Settlement.Type.VILLAGE) == null)? true: Config.SETTLEMENT_BUILDING_COST.get(Settlement.Type.VILLAGE).get(x) <= currentResources.get(x);
-            }) ;
-        }
+        //checks if player has all necessary  resources.
+        Map<ResourceType,Integer> currentResources =this.getPlayer().getResources();
+        return (getPlayer().getRemainingVillages() > 0) && ( playerObjectiveProperty.getValue().equals(PlayerObjective.PLACE_VILLAGE) ||  currentResources.keySet().stream().allMatch(x->{
+            return (Config.SETTLEMENT_BUILDING_COST.get(Settlement.Type.VILLAGE) == null)? true: Config.SETTLEMENT_BUILDING_COST.get(Settlement.Type.VILLAGE).get(x) <= currentResources.get(x);
+        })  ) ;
     }
 
     /**
@@ -462,16 +458,14 @@ public class PlayerController {
     @StudentImplementationRequired("H2.5")
     public boolean canBuildRoad() {
         // TODO: H2.4 check done (maybe redo first Round exeption)
-        if(isFirstRound() && (player.getRoads().size() <2)){
-            return true;    //first Round maybe more intricate.
-        }else {
+
             //checks if player has all necessary  resources.
             Map<ResourceType,Integer> currentResources =this.getPlayer().getResources();
 
-            return (getPlayer().getRemainingRoads() > 0)  && currentResources.keySet().stream().allMatch(x->{
+            return (getPlayer().getRemainingRoads() > 0)  && ( playerObjectiveProperty.getValue().equals(PlayerObjective.PLACE_ROAD) ||currentResources.keySet().stream().allMatch(x->{
                 return (Config.ROAD_BUILDING_COST.get(x) == null)? true: Config.ROAD_BUILDING_COST.get(x) <= currentResources.get(x);
-            }) ;
-        }
+            })  );
+
     }
 
     /**
