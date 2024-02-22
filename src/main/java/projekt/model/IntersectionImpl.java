@@ -96,7 +96,7 @@ public class IntersectionImpl implements Intersection {
 
     @Override
     @StudentImplementationRequired("H1.4")
-    public boolean upgradeSettlement(final Player player) {
+    public boolean  upgradeSettlement(final Player player) {
         if (!playerHasSettlement(player) || !settlement.type().equals(VILLAGE)) return false;
 
         settlement = new Settlement(player, CITY, this);
