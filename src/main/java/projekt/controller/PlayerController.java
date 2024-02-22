@@ -312,7 +312,7 @@ public class PlayerController {
      * @return all intersections where a village can be built.
      */
     private Set<Intersection> getBuildableVillageIntersections() {
-        if (!canBuildVillage()) {
+        if (canBuildVillage()) {
             return Set.of();
         }
         Stream<Intersection> intersections = gameController.getState().getGrid().getIntersections().values().stream()
@@ -359,7 +359,7 @@ public class PlayerController {
         if(intersection.hasSettlement()){ // checks if village is already built.
             throw new IllegalActionException("A village is already on Intersection");
         }
-        if(canBuildVillage()){ // checks if village is already built.
+        if(!canBuildVillage()){ // checks if village is already built.
             throw new IllegalActionException("The player has not enough resources to build a Village");
         }
 
@@ -367,15 +367,12 @@ public class PlayerController {
 
 
             //conditions during the rest of the game.
-            if(intersection.placeVillage(player,isFirstRound())  ){}else{
+            if(!intersection.placeVillage(player,isFirstRound())  ){
                 throw new IllegalActionException(" settlement placement failed(probably no adjacent owned roads)");
             }
 
 
-
-            if(playerObjectiveProperty.getValue() == PlayerObjective.PLACE_VILLAGE){
-                //create village for free
-            }else{
+            if(  !(playerObjectiveProperty.getValue() == PlayerObjective.PLACE_VILLAGE)  ){
                 //create village at cost.
                 player.removeResources(Config.SETTLEMENT_BUILDING_COST.get(Settlement.Type.VILLAGE));
             }
@@ -508,8 +505,8 @@ public class PlayerController {
         if(roadToBe.hasRoad()){ // checks if road is already owned.
             throw new IllegalActionException("road already has a owner");
         }
-        if(canBuildRoad()){ // checks if the player has enough resources.
-            throw new IllegalActionException("THe player doesn't have enough resources to build a road");
+        if(!canBuildRoad()){ // checks if the player has enough resources.
+            throw new IllegalActionException("The player doesn't have enough resources to build a road");
         }
 
 
