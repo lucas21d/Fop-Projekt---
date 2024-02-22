@@ -226,10 +226,10 @@ public class HexGridImpl implements HexGrid {
     @Override
     @StudentImplementationRequired("H1.3")
     public Map<Set<TilePosition>, Edge> getRoads(final Player player) {
-        // TODO: H1.3 check
+        // TODO: H1.3 check done
         Map<Set<TilePosition>, Edge> result = new HashMap<>();
         edges.forEach((a,b)->{
-            if(b.getRoadOwner().equals(player)){
+            if(b.getRoadOwner() == player){
                 result.put(a,b);
             }
 
