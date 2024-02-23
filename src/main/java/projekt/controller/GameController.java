@@ -419,7 +419,6 @@ public class GameController {
         Player activePlayer = activePlayerControllerProperty.getValue().getPlayer();
 
         List<Tile> tilesWithoutRobber = activePlayer.getHexGrid().getTiles(diceRoll).stream().filter(tile -> !tile.hasRobber()).toList();
-        int uransToReceive = 0;
         for (Tile tile : tilesWithoutRobber) {
             for (Settlement settlement : tile.getSettlements()) {
                 if (settlement.type().equals(Settlement.Type.VILLAGE)) {
@@ -428,13 +427,8 @@ public class GameController {
                 if (settlement.type().equals(Settlement.Type.CITY)) {
                     settlement.owner().addResource(tile.getType().resourceType, 2);
                 }
-                if (settlement.type().equals(Settlement.Type.CITY_WITH_REACTOR) && settlement.owner().equals(activePlayer)) {
-                    uransToReceive++;
-                }
             }
         }
-        activePlayer.addResource(ResourceType.URAN, uransToReceive);
-        System.out.println("Added " + uransToReceive + "to " + activePlayer.getName());
     }
 
 
