@@ -334,7 +334,7 @@ public class    PlayerActionsController implements Controller {
     private void buildVillageButtonAction(final ActionEvent event) {
         // TODO: H3.1 check done
         Set<Intersection> buildableVillages = getPlayerState().buildableVillageIntersections(); // gets all buildable spaces
-        getHexGridController().getIntersectionControllers().stream().filter(x->buildableVillages.contains(x.getIntersection())).forEach(x->{x.highlight(buildActionWrapper(MouseEvent->getPlayerController().triggerAction(new BuildVillageAction(x.getIntersection())))); removeAllHighlights();});
+        getHexGridController().getIntersectionControllers().stream().filter(x->buildableVillages.contains(x.getIntersection())).forEach(x->{x.highlight(buildActionWrapper(MouseEvent->getPlayerController().triggerAction(new BuildVillageAction(x.getIntersection()))));});
     }
 
     /**
@@ -370,7 +370,7 @@ public class    PlayerActionsController implements Controller {
     private void upgradeVillageButtonAction(final ActionEvent event) {
         // TODO: H3.1 check done
         Set<Intersection> upgradableVillages = getPlayerState().upgradableVillageIntersections(); // gets all upgradable Villages
-        getHexGridController().getIntersectionControllers().stream().filter(x->upgradableVillages.contains(x.getIntersection())).forEach(x->{x.highlight(buildActionWrapper(MouseEvent->getPlayerController().triggerAction(new UpgradeVillageAction(x.getIntersection())))); removeAllHighlights();});
+        getHexGridController().getIntersectionControllers().stream().filter(x->upgradableVillages.contains(x.getIntersection())).forEach(x->{x.highlight(buildActionWrapper(MouseEvent->getPlayerController().triggerAction(new UpgradeVillageAction(x.getIntersection()))));});
     }
 
     /**
@@ -406,7 +406,7 @@ public class    PlayerActionsController implements Controller {
     private void buildRoadButtonAction(final ActionEvent event) {
         // TODO: H3.1 check done
         Set<Edge> buildableRoads = getPlayerState().buildableRoadEdges(); // gets all buildable spaces
-        getHexGridController().getEdgeControllers().stream().filter(x->buildableRoads.contains(x.getEdge())).forEach(x->{x.highlight(buildActionWrapper(MouseEvent->getPlayerController().triggerAction(new BuildRoadAction(x.getEdge())))); removeAllHighlights();});
+        getHexGridController().getEdgeControllers().stream().filter(x->buildableRoads.contains(x.getEdge())).forEach(x->{x.highlight(buildActionWrapper(MouseEvent->getPlayerController().triggerAction(new BuildRoadAction(x.getEdge()))));});
     }
 
     /**
