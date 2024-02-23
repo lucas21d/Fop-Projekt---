@@ -96,7 +96,11 @@ public class CreateGameBuilder extends MenuBuilder {
             createAddPlayerButton() // added
         );
         mainBox.alignmentProperty().set(Pos.TOP_CENTER);
-        return mainBox;
+
+        final ScrollPane scrollPane = new ScrollPane();
+        scrollPane.setContent(mainBox);
+        scrollPane.setFitToWidth(true);
+        return scrollPane;
     }
 
     /**
@@ -143,6 +147,7 @@ public class CreateGameBuilder extends MenuBuilder {
 
     /**
      * Creates an alert for when the color selected is already in use.
+     *
      * @return alert created.
      */
     @NotNull
