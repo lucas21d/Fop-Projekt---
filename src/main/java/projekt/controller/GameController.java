@@ -7,23 +7,15 @@ import javafx.beans.property.SimpleObjectProperty;
 import org.tudalgo.algoutils.student.annotation.DoNotTouch;
 import org.tudalgo.algoutils.student.annotation.StudentImplementationRequired;
 import projekt.Config;
-import projekt.controller.actions.EndTurnAction;
 import projekt.controller.actions.AcceptTradeAction;
+import projekt.controller.actions.EndTurnAction;
 import projekt.controller.actions.IllegalActionException;
 import projekt.controller.actions.PlayerAction;
-import projekt.model.DevelopmentCardType;
-import projekt.model.GameState;
-import projekt.model.HexGridImpl;
-import projekt.model.Player;
-import projekt.model.ResourceType;
+import projekt.model.*;
 import projekt.model.buildings.Settlement;
+import projekt.model.tiles.Tile;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -113,7 +105,7 @@ public class GameController {
             playerControllers.put(player, new PlayerController(this, player));
             if (player.isAi()) {
                 aiControllers.add(new BasicAiController(playerControllers.get(player), state.getGrid(), state,
-                                                        activePlayerControllerProperty
+                    activePlayerControllerProperty
                 ));
             }
         }
@@ -296,7 +288,7 @@ public class GameController {
         //Ignore warning
         while (!(getActivePlayerController()
             .waitForNextAction(REGULAR_TURN)
-            instanceof EndTurnAction));
+            instanceof EndTurnAction)) ;
     }
 
     /**
@@ -337,7 +329,7 @@ public class GameController {
         final Map<ResourceType, Integer> request
     ) {
         // offer trade to all players
-        for (PlayerController playerController: playerControllers.values()) {
+        for (PlayerController playerController : playerControllers.values()) {
             if (!playerController.canAcceptTradeOffer(offeringPlayer, offer)) {
                 continue;
             }
@@ -375,12 +367,13 @@ public class GameController {
             .getPlayers()
             .forEach(this::diceRollSevenPlayerAction);
 
-        withActivePlayer(roller,this::moveRobber);
+        withActivePlayer(roller, this::moveRobber);
     }
 
     /**
      * Triggered for each player when a seven is rolled.
      * Checks if the player has more than seven resources and executes DROP_CARDS action if needed.
+     *
      * @param player The player for which the check is run.
      */
     private void diceRollSevenPlayerAction(Player player) {
@@ -394,6 +387,7 @@ public class GameController {
 
     /**
      * Calculates the total number of resources a given player has.
+     *
      * @return the total number of resources a given player has
      */
     private int getTotalNumberOfResources(Player player) {
@@ -422,13 +416,26 @@ public class GameController {
      */
     @StudentImplementationRequired("H2.2")
     public void distributeResources(final int diceRoll) {
-        // TODO: H2.2 check, done
+        Player activePlayer = activePlayerControllerProperty.getValue().getPlayer();
 
-        activePlayerControllerProperty.getValue().getPlayer().getHexGrid().getTiles(diceRoll).stream().filter(x->{return !(x.hasRobber());}).forEach(x->{
-            x.getSettlements().stream().forEach(y->{ if(y.type().equals( Settlement.Type.CITY)){ y.owner().addResource(x.getType().resourceType, 2);}else{y.owner().addResource(x.getType().resourceType, 1);} } );
+        List<Tile> tilesWithoutRobber = activePlayer.getHexGrid().getTiles(diceRoll).stream().filter(tile -> !tile.hasRobber()).toList();
+        int uransToReceive = 0;
+        for (Tile tile : tilesWithoutRobber) {
+            for (Settlement settlement : tile.getSettlements()) {
+                if (settlement.type().equals(Settlement.Type.VILLAGE)) {
+                    settlement.owner().addResource(tile.getType().resourceType, 1);
+                }
+                if (settlement.type().equals(Settlement.Type.CITY)) {
+                    settlement.owner().addResource(tile.getType().resourceType, 2);
+                }
+                if (settlement.type().equals(Settlement.Type.CITY_WITH_REACTOR) && settlement.owner().equals(activePlayer)) {
+                    uransToReceive++;
+                }
+            }
         }
-        );
-
-
+        activePlayer.addResource(ResourceType.URAN, uransToReceive);
+        System.out.println("Added " + uransToReceive + "to " + activePlayer.getName());
     }
+
+
 }
