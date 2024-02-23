@@ -35,8 +35,35 @@ public class IntegerField extends TextField {
             }
             try {
                 valueProperty.set(Integer.parseInt(newText));
+                setText(Integer.toString(valueProperty.get()));
             } catch (final NumberFormatException e) {
                 setText(oldText);
+            }
+        });
+    }
+
+    /**
+     * Creates a new integer field with the given initial value and a maximum value.
+     *
+     * @param initialValue The initial value.
+     * @param maxValue The maximum value.
+     */
+    public IntegerField(final int initialValue, final int maxValue) {
+        super(Integer.toString(initialValue));
+        this.setTextFormatter(new TextFormatter<>(new IntegerStringConverter(), 0, Utils.positiveIntegerFilter));
+        textProperty().subscribe((oldText, newText) -> {
+            if (newText.isEmpty()) {
+                return;
+            }
+            try {
+                valueProperty.set(Integer.parseInt(newText));
+                setText(Integer.toString(valueProperty.get()));
+            } catch (final NumberFormatException e) {
+                setText(oldText);
+            }
+            if (valueProperty.get() > maxValue) {
+                valueProperty.set(maxValue);
+                setText(Integer.toString(maxValue));
             }
         });
     }
