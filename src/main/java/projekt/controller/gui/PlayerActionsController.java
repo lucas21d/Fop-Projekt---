@@ -310,7 +310,8 @@ public class    PlayerActionsController implements Controller {
         // TODO: H3.1 check done
         if(getPlayerObjective().getAllowedActions().contains(BuildVillageAction.class)  //checks if building a Village is allowed in current state.
             && getPlayerController().canBuildVillage()                                  //checks if player has enough resources.
-            && getPlayerController().getPlayer().getRoads().values().stream().anyMatch(x->x.getIntersections().stream().anyMatch(y->!y.hasSettlement() ))){ //checks if there a any empty Intersections adjacent to owned roads.
+            && (  getPlayerController().getPlayer().getSettlements().size() < 2         //first round placing the first 2 villages anywhere.
+            || getPlayerController().getPlayer().getRoads().values().stream().anyMatch(x->x.getIntersections().stream().anyMatch(y->!y.hasSettlement() )))  ){ //checks if there a any empty Intersections adjacent to owned roads.
 
             builder.enableBuildVillageButton();
         }else{
@@ -381,7 +382,8 @@ public class    PlayerActionsController implements Controller {
         // TODO: H3.1 check done
         if(getPlayerObjective().getAllowedActions().contains(BuildRoadAction.class)  //checks if building a Road is allowed in current state.
             && getPlayerController().canBuildRoad()                                  //checks if player has enough resources.
-            && getPlayerController().getPlayer().getRoads().values().stream().anyMatch(z->z.getIntersections().stream().anyMatch(x->(x.hasSettlement())? x.getSettlement().owner().equals(getPlayer()):true &&(x.getConnectedEdges().stream().anyMatch(y->y.getRoadOwner().equals(getPlayer())))))){ //checks if there a any empty Edges adjacent to owned roads and not blocked by an enemy settlement.
+            &&( getPlayerController().getPlayer().getSettlements().stream().anyMatch(x->x.intersection().getConnectedEdges().stream().anyMatch(y-> !y.hasRoad()))   // checks if any emty Edges beside a settlement
+            || getPlayerController().getPlayer().getRoads().values().stream().anyMatch(z->z.getIntersections().stream().anyMatch(x->(x.hasSettlement())? x.getSettlement().owner().equals(getPlayer()):true &&(x.getConnectedEdges().stream().anyMatch(y->y.getRoadOwner().equals(getPlayer()))))))   ){ //checks if there's any empty Edges adjacent to owned roads and not blocked by an enemy settlement.
 
             builder.enableBuildRoadButton();
         }else{
