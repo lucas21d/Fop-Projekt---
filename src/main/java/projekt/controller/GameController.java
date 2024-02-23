@@ -7,11 +7,16 @@ import javafx.beans.property.SimpleObjectProperty;
 import org.tudalgo.algoutils.student.annotation.DoNotTouch;
 import org.tudalgo.algoutils.student.annotation.StudentImplementationRequired;
 import projekt.Config;
+import projekt.controller.actions.EndTurnAction;
+import projekt.controller.actions.AcceptTradeAction;
+import projekt.controller.actions.IllegalActionException;
+import projekt.controller.actions.PlayerAction;
 import projekt.model.DevelopmentCardType;
 import projekt.model.GameState;
 import projekt.model.HexGridImpl;
 import projekt.model.Player;
 import projekt.model.ResourceType;
+import projekt.model.buildings.Settlement;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -22,6 +27,8 @@ import java.util.Set;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+
+import static projekt.controller.PlayerObjective.*;
 
 /**
  * The GameController class represents the controller for the game logic.
@@ -276,7 +283,7 @@ public class GameController {
     public void withActivePlayer(final PlayerController pc, final Runnable r) {
         activePlayerControllerProperty.setValue(pc);
         r.run();
-        pc.setPlayerObjective(PlayerObjective.IDLE);
+        pc.setPlayerObjective(IDLE);
         activePlayerControllerProperty.setValue(null);
     }
 
@@ -286,8 +293,10 @@ public class GameController {
      */
     @StudentImplementationRequired("H2.1")
     private void regularTurn() {
-        // TODO: H2.1
-        org.tudalgo.algoutils.student.Student.crash("H2.1 - Remove if implemented");
+        //Ignore warning
+        while (!(getActivePlayerController()
+            .waitForNextAction(REGULAR_TURN)
+            instanceof EndTurnAction));
     }
 
     /**
@@ -297,8 +306,21 @@ public class GameController {
      */
     @StudentImplementationRequired("H2.1")
     private void firstRound() {
-        // TODO: H2.1
-        org.tudalgo.algoutils.student.Student.crash("H2.1 - Remove if implemented");
+        playerControllers
+            .values()
+            .forEach(value -> withActivePlayer(value, this::firstActions));
+    }
+
+    /**
+     * Initiates the actions for the activePlayerController at the beginning of the game
+     */
+    private void firstActions() {
+        if (getActivePlayerController() == null) return;
+
+        for (int i = 0; i < 2; i++) {
+            getActivePlayerController().waitForNextAction(PLACE_VILLAGE);
+            getActivePlayerController().waitForNextAction(PLACE_ROAD);
+        }
     }
 
     /**
@@ -314,8 +336,28 @@ public class GameController {
         final Player offeringPlayer, final Map<ResourceType, Integer> offer,
         final Map<ResourceType, Integer> request
     ) {
-        // TODO: H2.3
-        org.tudalgo.algoutils.student.Student.crash("H2.3 - Remove if implemented");
+        // offer trade to all players
+        for (PlayerController playerController: playerControllers.values()) {
+            if (!playerController.canAcceptTradeOffer(offeringPlayer, offer)) {
+                continue;
+            }
+
+            playerController.setPlayerTradeOffer(offeringPlayer, offer, request);
+            // read action from the player
+            PlayerAction playerAction = playerController.waitForNextAction(PlayerObjective.ACCEPT_TRADE);
+            if (playerAction instanceof AcceptTradeAction tradeAction) {
+                try {
+                    // accept the offer and break, so that the other players don't receive the offer
+                    if (tradeAction.accepted()) {
+                        playerController.acceptTradeOffer(true);
+                        break;
+                    }
+                    playerController.resetPlayerTradeOffer();
+                } catch (IllegalActionException ignored) {
+                }
+            }
+        }
+        setActivePlayerControllerProperty(offeringPlayer);
     }
 
     /**
@@ -327,8 +369,50 @@ public class GameController {
      */
     @StudentImplementationRequired("H2.1")
     private void diceRollSeven() {
-        // TODO: H2.1
-        org.tudalgo.algoutils.student.Student.crash("H2.1 - Remove if implemented");
+        PlayerController roller = getActivePlayerController();
+
+        getState()
+            .getPlayers()
+            .forEach(this::diceRollSevenPlayerAction);
+
+        withActivePlayer(roller,this::moveRobber);
+    }
+
+    /**
+     * Triggered for each player when a seven is rolled.
+     * Checks if the player has more than seven resources and executes DROP_CARDS action if needed.
+     * @param player The player for which the check is run.
+     */
+    private void diceRollSevenPlayerAction(Player player) {
+        if (getTotalNumberOfResources(player) <= 7) return;
+
+        withActivePlayer(
+            playerControllers
+                .get(player),
+            () -> getActivePlayerController().waitForNextAction(DROP_CARDS));
+    }
+
+    /**
+     * Calculates the total number of resources a given player has.
+     * @return the total number of resources a given player has
+     */
+    private int getTotalNumberOfResources(Player player) {
+        return player
+            .getResources()
+            .values()
+            .stream()
+            .mapToInt(Integer::intValue)
+            .sum();
+    }
+
+    /**
+     * Allows the active playerController to move the robber and steal a card another player
+     */
+    private void moveRobber() {
+        if (getActivePlayerController() == null) return;
+
+        getActivePlayerController().waitForNextAction(SELECT_ROBBER_TILE);
+        getActivePlayerController().waitForNextAction(SELECT_CARD_TO_STEAL);
     }
 
     /**
@@ -338,7 +422,13 @@ public class GameController {
      */
     @StudentImplementationRequired("H2.2")
     public void distributeResources(final int diceRoll) {
-        // TODO: H2.2
-        org.tudalgo.algoutils.student.Student.crash("H2.2 - Remove if implemented");
+        // TODO: H2.2 check, done
+
+        activePlayerControllerProperty.getValue().getPlayer().getHexGrid().getTiles(diceRoll).stream().filter(x->{return !(x.hasRobber());}).forEach(x->{
+            x.getSettlements().stream().forEach(y->{ if(y.type().equals( Settlement.Type.CITY)){ y.owner().addResource(x.getType().resourceType, 2);}else{y.owner().addResource(x.getType().resourceType, 1);} } );
+        }
+        );
+
+
     }
 }

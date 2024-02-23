@@ -7,7 +7,9 @@ import projekt.model.Intersection;
 import projekt.model.Player;
 import projekt.model.TilePosition;
 
+import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Default implementation of {@link Edge}.
@@ -49,15 +51,50 @@ public record EdgeImpl(
     @Override
     @StudentImplementationRequired("H1.3")
     public boolean connectsTo(final Edge other) {
-        // TODO: H1.3
-        return org.tudalgo.algoutils.student.Student.crash("H1.3 - Remove if implemented");
+        // TODO H1.3 check
+        return getIntersections().stream().anyMatch(a->{return other.getIntersections().stream().anyMatch(b->b.equals(a));});
     }
 
     @Override
     @StudentImplementationRequired("H1.3")
     public Set<Intersection> getIntersections() {
-        // TODO: H1.3
-        return org.tudalgo.algoutils.student.Student.crash("H1.3 - Remove if implemented");
+        Set<Intersection> result;
+        // TODO: H1.3 better alternative solution is to get the overlapping Intersections of both Tiles(chose one way).
+        /*
+        //funktioniert nicht weil es den fall gibt wo eine der TilePos auserhalb des Spielfelds ist und deshalb keine Tile hat.
+        Set<Intersection> otherSet = grid.getTileAt(position2).getIntersections();
+        result = grid.getTileAt(position1).getIntersections().stream().filter(a->{return otherSet.contains(a);}).collect(Collectors.toSet());
+        */
+
+
+
+        //The harder way and correct way(because of edge of board case)
+
+        //prework
+        int qDiff = position1.q() - position2.q();
+        int rDiff = position1.r() - position2.r();
+        int sDiff = position1.s() - position2.s();
+
+        TilePosition adj1 = null;
+        TilePosition adj2 = null;
+        //determines the axis of the edge and adjacent tile
+        if(qDiff == 0){
+            adj1 = new TilePosition(position2.q()+rDiff,position2.r());
+            adj2 = new TilePosition(position2.q()+sDiff,position2.r()+rDiff);
+        } else if (rDiff == 0) {
+            adj1 = new TilePosition(position2.q(),position2.r()+qDiff);
+            adj2 = new TilePosition(position2.q()+qDiff,position2.r()+sDiff);
+        } else if (sDiff == 0) {
+            adj1 = new TilePosition(position2.q(),position2.r()+rDiff);
+            adj2 = new TilePosition(position2.q()+qDiff,position2.r());
+        }
+        //
+        result= new HashSet<>();
+        result.add(grid.getIntersectionAt(position1,position2,adj1));
+        result.add(grid.getIntersectionAt(position1,position2,adj2));
+
+        return result;
+
     }
 
     @Override
@@ -68,7 +105,8 @@ public record EdgeImpl(
     @Override
     @StudentImplementationRequired("H1.3")
     public Set<Edge> getConnectedRoads(final Player player) {
-        // TODO: H1.3
-        return org.tudalgo.algoutils.student.Student.crash("H1.3 - Remove if implemented");
+        // TODO: H1.3 check
+        return getConnectedEdges().stream().filter(a->{return (a.hasRoad())?  a.getRoadOwner().equals(player) : false;}).collect(Collectors.toSet());
     }
+
 }
