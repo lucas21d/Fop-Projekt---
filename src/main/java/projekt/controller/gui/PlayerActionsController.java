@@ -160,8 +160,19 @@ public class    PlayerActionsController implements Controller {
                 acceptTradeOffer();
                 break;
 
+                //TODO 3.2 default case erweitern oder etwas anderes fixen, weil wenn der code von REGULAR_TURN nicht dort ist wird das spiel blockiert.
+                // TODO 3.2 vielleicht kiegt es daran ,dass es keinen case für IDLE gibt?
             default:
+                updateBuildRoadButtonState();
+                updateBuildVillageButtonState();
+                updateUpgradeVillageButtonState();
+                updateBuyDevelopmentCardButtonState();
+                updateUseDevelopmentCardButtonState();
+                builder.enableEndTurnButton();
+                builder.enableRollDiceButton();
+                builder.enableTradeButton();
                 break;
+
         }
     }
 
@@ -334,7 +345,9 @@ public class    PlayerActionsController implements Controller {
     private void buildVillageButtonAction(final ActionEvent event) {
         // TODO: H3.1 check done
         Set<Intersection> buildableVillages = getPlayerState().buildableVillageIntersections(); // gets all buildable spaces
-        getHexGridController().getIntersectionControllers().stream().filter(x->buildableVillages.contains(x.getIntersection())).forEach(x->{x.highlight(buildActionWrapper(MouseEvent->getPlayerController().triggerAction(new BuildVillageAction(x.getIntersection()))));});
+
+        getHexGridController().getIntersectionControllers().stream().filter(x->buildableVillages.stream().anyMatch( y->y.equals(x.getIntersection()) )).forEach(
+            x->{x.highlight(buildActionWrapper(MouseEvent->getPlayerController().triggerAction(new BuildVillageAction(x.getIntersection()))));});
     }
 
     /**

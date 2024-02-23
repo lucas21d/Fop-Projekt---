@@ -312,7 +312,7 @@ public class PlayerController {
      * @return all intersections where a village can be built.
      */
     private Set<Intersection> getBuildableVillageIntersections() {
-        if (canBuildVillage()) {
+        if (!canBuildVillage()) {
             return Set.of();
         }
         Stream<Intersection> intersections = gameController.getState().getGrid().getIntersections().values().stream()
@@ -338,9 +338,11 @@ public class PlayerController {
 
         //checks if player has all necessary  resources.
         Map<ResourceType,Integer> currentResources =this.getPlayer().getResources();
-        return (getPlayer().getRemainingVillages() > 0) && ( playerObjectiveProperty.getValue() == PlayerObjective.PLACE_VILLAGE ||  currentResources.keySet().stream().allMatch(x->{
-            return (Config.SETTLEMENT_BUILDING_COST.get(Settlement.Type.VILLAGE) == null)? true: Config.SETTLEMENT_BUILDING_COST.get(Settlement.Type.VILLAGE).get(x) <= currentResources.get(x);
-        })  ) ;
+        Map<ResourceType,Integer> villageCost = Config.SETTLEMENT_BUILDING_COST.get(Settlement.Type.VILLAGE);
+        return (getPlayer().getRemainingVillages() > 0)
+            && ( playerObjectiveProperty.getValue() == PlayerObjective.PLACE_VILLAGE
+            ||  villageCost.keySet().stream().allMatch( x->{return(currentResources.get(x) == null)? false : currentResources.get(x) >= villageCost.get(x); })     );
+
     }
 
     /**
@@ -468,8 +470,10 @@ public class PlayerController {
             //checks if player has all necessary  resources.
             Map<ResourceType,Integer> currentResources =this.getPlayer().getResources();
 
-            return (getPlayer().getRemainingRoads() > 0)  && ( playerObjectiveProperty.getValue() == PlayerObjective.PLACE_ROAD  ||currentResources.keySet().stream().allMatch(x->{
-                return (Config.ROAD_BUILDING_COST.get(x) == null)? true: Config.ROAD_BUILDING_COST.get(x) <= currentResources.get(x);
+            return (getPlayer().getRemainingRoads() > 0)
+                && ( playerObjectiveProperty.getValue() == PlayerObjective.PLACE_ROAD
+                || Config.ROAD_BUILDING_COST.keySet().stream().allMatch(x->{
+                return (currentResources.get(x) == null)? false: Config.ROAD_BUILDING_COST.get(x) <= currentResources.get(x);
             })  );
 
     }
@@ -520,7 +524,7 @@ public class PlayerController {
             }
         }else{
             //conditions during the rest of the game.
-            if(roadToBe.getIntersections().stream().anyMatch(x->(x.hasSettlement())? x.getSettlement().owner().equals(player):true &&(x.getConnectedEdges().stream().anyMatch(y->y.getRoadOwner().equals(player))))  ){
+            if(roadToBe.getIntersections().stream().anyMatch(x->(x.hasSettlement())? player.equals(x.getSettlement().owner()):true &&(x.getConnectedEdges().stream().anyMatch(y->player.equals(y.getRoadOwner()))))  ){
                 roadToBe.getRoadOwnerProperty().setValue(player);   //builds road in 1st round for free.
             }else{
                 throw new IllegalActionException(" no adjacent and unblocked roads for the road");
