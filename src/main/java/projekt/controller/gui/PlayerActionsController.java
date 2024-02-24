@@ -322,7 +322,7 @@ public class    PlayerActionsController implements Controller {
         if(getPlayerObjective().getAllowedActions().contains(BuildVillageAction.class)  //checks if building a Village is allowed in current state.
             && getPlayerController().canBuildVillage()                                  //checks if player has enough resources.
             && (  getPlayerController().getPlayer().getSettlements().size() < 2         //first round placing the first 2 villages anywhere.
-            || getPlayerController().getPlayer().getRoads().values().stream().anyMatch(x->x.getIntersections().stream().anyMatch(y->!y.hasSettlement() )))  ){ //checks if there a any empty Intersections adjacent to owned roads.
+            || !getPlayerState().buildableVillageIntersections().isEmpty()  ) ){ //checks if there a any empty Intersections adjacent to owned roads.
 
             builder.enableBuildVillageButton();
         }else{
