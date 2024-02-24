@@ -65,7 +65,7 @@ public class SelectResourcesDialog extends Dialog<Map<ResourceType, Integer>> {
         dialogContainer.setAlignment(Pos.CENTER);
 
         Label label = new Label("You (" + player.getName() + ") need to " + (dropCards ? "drop " : "select ") + amountToSelect + " more " + (amountToSelect == 1 ? "card" : "cards"));
-        label.setFont(Font.font(30));
+        label.setFont(Font.font(25));
 
         label.textProperty().bind(Bindings.createStringBinding(
             () -> {

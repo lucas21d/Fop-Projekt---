@@ -16,7 +16,6 @@ import projekt.model.GameState;
 import projekt.model.HexGridImpl;
 import projekt.model.Player;
 import projekt.model.ResourceType;
-import projekt.model.buildings.Settlement;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -376,6 +375,8 @@ public class GameController {
             .forEach(this::diceRollSevenPlayerAction);
 
         withActivePlayer(roller,this::moveRobber);
+
+        setActivePlayerControllerProperty(roller.getPlayer());
     }
 
     /**
@@ -426,12 +427,16 @@ public class GameController {
     @StudentImplementationRequired("H2.2")
     public void distributeResources(final int diceRoll) {
         // TODO: H2.2 check, done
-
-        activePlayerControllerProperty.getValue().getPlayer().getHexGrid().getTiles(diceRoll).stream().filter(x->{return !(x.hasRobber());}).forEach(x->{
-            x.getSettlements().stream().forEach(y->{ if(y.type().equals( Settlement.Type.CITY)){ y.owner().addResource(x.getType().resourceType, 2);}else{y.owner().addResource(x.getType().resourceType, 1);} } );
-        }
-        );
-
-
+        activePlayerControllerProperty
+            .getValue()
+            .getPlayer()
+            .getHexGrid()
+            .getTiles(diceRoll)
+            .stream()
+            .filter(x -> !(x.hasRobber()))
+            .forEach(tile -> tile.getSettlements()
+                        .forEach(settlement -> settlement
+                            .owner()
+                            .addResource(tile.getType().resourceType, settlement.type().resourceAmount)));
     }
 }
