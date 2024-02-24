@@ -293,10 +293,13 @@ public class GameController {
      */
     @StudentImplementationRequired("H2.1")
     private void regularTurn() {
-        //Ignore warning
-        while (!(getActivePlayerController()
-            .waitForNextAction(REGULAR_TURN)
-            instanceof EndTurnAction));
+        PlayerAction action;
+        PlayerController activePlayerController = getActivePlayerController();
+        if (activePlayerController != null) {
+            do {
+                action = activePlayerController.waitForNextAction(REGULAR_TURN);
+            } while (!(action instanceof EndTurnAction));
+        }
     }
 
     /**
