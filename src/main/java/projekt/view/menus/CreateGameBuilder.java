@@ -127,9 +127,7 @@ public class CreateGameBuilder extends MenuBuilder {
     @StudentImplementationRequired("H3.4")
     private Node createPlayerColorPicker(final Builder playerBuilder) {
         ColorPicker colorPicker = new ColorPicker();
-//        colorPicker.getCustomColors().setAll(Color.RED, Color.GREEN, Color.BLUE);
         colorPicker.setValue(playerBuilder.getColor());
-//        colorPicker.
         final ObjectProperty<Color> oldColorProperty = new SimpleObjectProperty<>(playerBuilder.getColor());
         colorPicker.setOnAction(event -> {
             Color colorPicked = colorPicker.getValue();
