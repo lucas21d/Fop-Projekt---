@@ -104,6 +104,23 @@ public class IntersectionImpl implements Intersection {
         return true;
     }
 
+    public void downgradeSettlement(final Player player) {
+        if (!playerHasSettlement(player)) {
+            return;
+        }
+
+        if (settlement.type().equals(VILLAGE)) {
+            return;
+        }
+
+        if (settlement.type().equals(CITY_WITH_REACTOR)) {
+            settlement = new Settlement(player, CITY, this);
+        }
+        if (settlement.type().equals(CITY)) {
+            settlement = new Settlement(player, VILLAGE, this);
+        }
+    }
+
     @Override
     public Port getPort() {
         return getConnectedEdges().stream()
