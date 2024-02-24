@@ -14,6 +14,7 @@ import org.tudalgo.algoutils.student.annotation.DoNotTouch;
  * 3: Tree
  * 4: Rocks
  * 5: Ingots
+ * 6: Uran
  */
 @DoNotTouch
 public enum ResourceType {
@@ -21,7 +22,8 @@ public enum ResourceType {
     CLAY(Color.SIENNA, 2),
     WOOL(Color.LINEN, 0),
     GRAIN(Color.YELLOW, 1),
-    ORE(Color.SLATEGRAY, 4);
+    ORE(Color.SLATEGRAY, 4),
+    URAN(Color.GREEN, 6); // TODO: icon index needs to match the actual icon
 
     public final Color color;
     public final int iconIndex;
