@@ -71,7 +71,7 @@ public class SelectResourcesDialog extends Dialog<Map<ResourceType, Integer>> {
             () -> {
                 int difference = amountToSelect - selectedResources.get();
 
-                if (difference == 0) return "You (" + player.getName() + ") have selected the right amount of cards";
+                if (difference == 0) return "You (" + player.getName() + ") can continue";
 
                 if (difference < 0) return "You (" + player.getName() + ") need to deselect " + -difference + (difference == -1 ? " card" : " cards");
 
