@@ -15,7 +15,6 @@ import projekt.controller.PlayerObjective;
 import projekt.controller.actions.*;
 import projekt.model.*;
 import projekt.model.buildings.Edge;
-import projekt.model.buildings.Settlement;
 import projekt.model.tiles.Tile;
 import projekt.view.gameControls.AcceptTradeDialog;
 import projekt.view.gameControls.PlayerActionsBuilder;
@@ -29,6 +28,8 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.Consumer;
 
+import static projekt.model.buildings.Settlement.Type.*;
+
 /**
  * This class is responsible for handling all player actions performed through
  * the UI. It ensures that the correct buttons are enabled and disabled based on
@@ -40,7 +41,7 @@ import java.util.function.Consumer;
  * <b>Do not touch any of the given attributes these are constructed in a way to
  * ensure thread safety.</b>
  */
-public class    PlayerActionsController implements Controller {
+public class PlayerActionsController implements Controller {
     private final PlayerActionsBuilder builder;
     private final GameBoardController gameBoardController;
     private final Property<PlayerController> playerControllerProperty = new SimpleObjectProperty<>();
@@ -153,15 +154,17 @@ public class    PlayerActionsController implements Controller {
                 updateBuyDevelopmentCardButtonState();
                 updateUseDevelopmentCardButtonState();
                 builder.enableEndTurnButton();
-                builder.enableRollDiceButton();
                 builder.enableTradeButton();
                 break;
             case ACCEPT_TRADE:
                 acceptTradeOffer();
                 break;
-
+            case DICE_ROLL:
+                updateUpgradeVillageButtonState();
+                builder.enableRollDiceButton();
+                break;
                 //TODO 3.2 default case erweitern oder etwas anderes fixen, weil wenn der code von REGULAR_TURN nicht dort ist wird das spiel blockiert.
-                // TODO 3.2 vielleicht kiegt es daran ,dass es keinen case für IDLE gibt?
+                // TODO 3.2 vielleicht liegt es daran ,dass es keinen case für IDLE gibt?
             default:
                 updateBuildRoadButtonState();
                 updateBuildVillageButtonState();
@@ -360,7 +363,7 @@ public class    PlayerActionsController implements Controller {
         if(getPlayerObjective().getAllowedActions().contains(UpgradeVillageAction.class)    //checks if upgrading a village is allowed in current state.
             && getPlayerController().canUpgradeVillage()                                    //checks if player has enough resources.
             && !getPlayerController().getPlayer().getSettlements().isEmpty()                //checks if the player has any settlement
-            && getPlayerController().getPlayer().getSettlements().stream().anyMatch(x->x.type() == Settlement.Type.VILLAGE)){ //checks if there are any villages on Intersections.
+            && getPlayerController().getPlayer().getSettlements().stream().anyMatch(x -> x.type().equals(VILLAGE))){ //checks if there are any villages on Intersections.
 
             builder.enableUpgradeVillageButton();
         }else{
