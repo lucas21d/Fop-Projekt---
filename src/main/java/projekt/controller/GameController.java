@@ -316,6 +316,12 @@ public class GameController {
     private void firstActions() {
         if (getActivePlayerController() == null) return;
 
+        /*getActivePlayerController().getPlayer().addResource(ResourceType.WOOD, 20);
+        getActivePlayerController().getPlayer().addResource(ResourceType.CLAY, 20);
+        getActivePlayerController().getPlayer().addResource(ResourceType.WOOL, 20);
+        getActivePlayerController().getPlayer().addResource(ResourceType.GRAIN, 20);
+        getActivePlayerController().getPlayer().addResource(ResourceType.ORE, 20);*/
+
         for (int i = 0; i < 2; i++) {
             getActivePlayerController().waitForNextAction(PLACE_VILLAGE);
             getActivePlayerController().waitForNextAction(PLACE_ROAD);

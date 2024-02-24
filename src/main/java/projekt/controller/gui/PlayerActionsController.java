@@ -349,8 +349,16 @@ public class PlayerActionsController implements Controller {
         // TODO: H3.1 check done
         Set<Intersection> buildableVillages = getPlayerState().buildableVillageIntersections(); // gets all buildable spaces
 
-        getHexGridController().getIntersectionControllers().stream().filter(x->buildableVillages.stream().anyMatch( y->y.equals(x.getIntersection()) )).forEach(
-            x->{x.highlight(buildActionWrapper(MouseEvent->getPlayerController().triggerAction(new BuildVillageAction(x.getIntersection()))));});
+        getHexGridController()
+            .getIntersectionControllers()
+            .stream()
+            .filter(x -> buildableVillages
+                .stream()
+                .anyMatch(y -> y.equals(x.getIntersection())))
+            .forEach(x -> x.highlight(
+                buildActionWrapper(MouseEvent -> getPlayerController()
+                    .triggerAction(new BuildVillageAction(x.getIntersection())))
+            ));
     }
 
     /**
@@ -366,9 +374,10 @@ public class PlayerActionsController implements Controller {
             && getPlayerController().getPlayer().getSettlements().stream().anyMatch(x -> x.type().equals(VILLAGE))){ //checks if there are any villages on Intersections.
 
             builder.enableUpgradeVillageButton();
-        }else{
-            builder.disableUpgradeVillageButton();
+            return;
         }
+
+        builder.disableUpgradeVillageButton();
     }
 
     /**
@@ -398,13 +407,17 @@ public class PlayerActionsController implements Controller {
         // TODO: H3.1 check done
         if(getPlayerObjective().getAllowedActions().contains(BuildRoadAction.class)  //checks if building a Road is allowed in current state.
             && getPlayerController().canBuildRoad()                                  //checks if player has enough resources.
-            &&( getPlayerController().getPlayer().getSettlements().stream().anyMatch(x->x.intersection().getConnectedEdges().stream().anyMatch(y-> !y.hasRoad()))   // checks if any emty Edges beside a settlement
-            || getPlayerController().getPlayer().getRoads().values().stream().anyMatch(z->z.getIntersections().stream().anyMatch(x->(x.hasSettlement())? x.getSettlement().owner().equals(getPlayer()):true &&(x.getConnectedEdges().stream().anyMatch(y->y.getRoadOwner().equals(getPlayer()))))))   ){ //checks if there's any empty Edges adjacent to owned roads and not blocked by an enemy settlement.
+            &&( getPlayerController().getPlayer().getSettlements().stream().anyMatch(x->x.intersection().getConnectedEdges().stream().anyMatch(y -> !y.hasRoad()))   // checks if any emty Edges beside a settlement
+            || getPlayerController().getPlayer().getRoads().values().stream().anyMatch(z->z.getIntersections().stream().anyMatch(x -> (x.hasSettlement()) ? x.getSettlement().owner().equals(getPlayer()) : (x.getConnectedEdges()
+                .stream()
+                .anyMatch(y -> y.getRoadOwner()
+                        .equals(getPlayer()))))))){ //checks if there's any empty Edges adjacent to owned roads and not blocked by an enemy settlement.
 
             builder.enableBuildRoadButton();
-        }else{
-            builder.disableBuildRoadButton();
+            return;
         }
+
+        builder.disableBuildRoadButton();
     }
 
     /**
@@ -422,7 +435,15 @@ public class PlayerActionsController implements Controller {
     private void buildRoadButtonAction(final ActionEvent event) {
         // TODO: H3.1 check done
         Set<Edge> buildableRoads = getPlayerState().buildableRoadEdges(); // gets all buildable spaces
-        getHexGridController().getEdgeControllers().stream().filter(x->buildableRoads.contains(x.getEdge())).forEach(x->{x.highlight(buildActionWrapper(MouseEvent->getPlayerController().triggerAction(new BuildRoadAction(x.getEdge()))));});
+        getHexGridController()
+            .getEdgeControllers()
+            .stream()
+            .filter(x -> buildableRoads.contains(x.getEdge()))
+            .forEach(x -> x.highlight(
+                buildActionWrapper(MouseEvent -> getPlayerController()
+                    .triggerAction(
+                    new BuildRoadAction(x.getEdge())))
+            ));
     }
 
     /**
