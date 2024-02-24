@@ -1,19 +1,24 @@
 package projekt.view.gameControls;
 
 import javafx.geometry.Insets;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.util.Builder;
 import projekt.model.DevelopmentCardType;
+import projekt.model.IntersectionImpl;
 import projekt.model.Player;
 import projekt.model.ResourceType;
+import projekt.model.buildings.Settlement;
+import projekt.model.tiles.Tile;
 import projekt.view.CardPane;
 import projekt.view.DevelopmentCardPane;
 import projekt.view.PlayerLabel;
 import projekt.view.ResourceCardPane;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -85,12 +90,45 @@ public class PlayerInformationBuilder implements Builder<Region> {
 
         final Label victoryPointsLabel = new Label(String.format("Your Victory Points: %d", player.getVictoryPoints()));
 
+        // nuclear strike
+        final Button nukeButton = new Button("Nuclear strike!");
+        nukeButton.setOnAction(event -> {
+            System.out.println("TILE PICKED:" + determineBestTileToAttack());
+            Tile tileToAttack = determineBestTileToAttack();
+            tileToAttack.getIntersections().forEach(intersection -> ((IntersectionImpl) intersection).downgradeSettlement(player));
+        });
+
         mainBox.getChildren().addAll(playerName, resourcesLabel, resourcesBox, developmentCardsLabel,
-                                     developmentCardsBox, remainingRoadsLabel, remainingVillagesLabel, remainingCitiesLabel,
-                                     victoryPointsLabel
+            developmentCardsBox, remainingRoadsLabel, remainingVillagesLabel, remainingCitiesLabel,
+            victoryPointsLabel,
+            nukeButton
         );
         mainBox.setPadding(new Insets(5));
         mainBox.setSpacing(5);
         return mainBox;
+    }
+
+    private Tile determineBestTileToAttack() {
+        List<Tile> allTiles = player.getHexGrid().getTiles().values().stream().toList();
+        int bestAttacScore = Integer.MIN_VALUE;
+        Tile bestTile = null;
+        for (Tile tile: allTiles) {
+            if (tileAttackScore(tile) > bestAttacScore) {
+                bestTile = tile;
+            }
+        }
+        return bestTile;
+    }
+
+    private int tileAttackScore(Tile tile) {
+        int score = 0;
+        for (Settlement settlement: tile.getSettlements()) {
+            if (settlement.owner().equals(player)) {
+                score--;
+            } else {
+                score++;
+            }
+        }
+        return score;
     }
 }
