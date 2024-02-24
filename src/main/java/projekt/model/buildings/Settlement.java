@@ -23,7 +23,8 @@ public record Settlement(Player owner, Type type, Intersection intersection) {
      */
     public enum Type {
         VILLAGE(1),
-        CITY(2);
+        CITY(2),
+        CITY_WITH_REACTOR(2);
 
         /**
          * The amount of resources that are produced by a settlement of this type.
