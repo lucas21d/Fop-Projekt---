@@ -374,8 +374,8 @@ public class GameController {
     private void diceRollSeven() {
         PlayerController roller = getActivePlayerController();
 
-        getState()
-            .getPlayers()
+        playerControllers
+            .values()
             .forEach(this::diceRollSevenPlayerAction);
 
         withActivePlayer(roller,this::moveRobber);
@@ -384,14 +384,17 @@ public class GameController {
     /**
      * Triggered for each player when a seven is rolled.
      * Checks if the player has more than seven resources and executes DROP_CARDS action if needed.
-     * @param player The player for which the check is run.
+     * @param playerController The playercontroller for which the check is run.
      */
-    private void diceRollSevenPlayerAction(Player player) {
-        if (getTotalNumberOfResources(player) <= 7) return;
+    private void diceRollSevenPlayerAction(PlayerController playerController) {
+        int numberOfResources = getTotalNumberOfResources(playerController.getPlayer());
+
+        if (numberOfResources <= 7) return;
+
+        playerController.setCardsToSelect((int) Math.floor(numberOfResources / 2.0)); //TODO this may need to be called elsewhere
 
         withActivePlayer(
-            playerControllers
-                .get(player),
+            playerController,
             () -> getActivePlayerController().waitForNextAction(DROP_CARDS));
     }
 
