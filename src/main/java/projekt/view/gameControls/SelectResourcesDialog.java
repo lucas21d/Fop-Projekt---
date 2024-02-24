@@ -4,6 +4,7 @@ import javafx.beans.binding.Bindings;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
@@ -61,6 +62,8 @@ public class SelectResourcesDialog extends Dialog<Map<ResourceType, Integer>> {
         Map<ResourceType, Integer> resourcesToSelectFrom,
         final boolean dropCards
     ) {
+        setTitle(dropCards ? "Drop Cards" : "Select Cards");
+
         VBox dialogContainer = new VBox();
         dialogContainer.setAlignment(Pos.CENTER);
 
@@ -124,6 +127,8 @@ public class SelectResourcesDialog extends Dialog<Map<ResourceType, Integer>> {
                 if (selectedResources.get() != amountToSelect) event.consume();
             }
         );
+
+        getDialogPane().getScene().getWindow().setOnCloseRequest(Event::consume);
 
         return dialogContainer;
     }
