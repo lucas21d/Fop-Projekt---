@@ -1,5 +1,7 @@
 package projekt.view.menus;
 
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.ObservableList;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -94,7 +96,11 @@ public class CreateGameBuilder extends MenuBuilder {
             createAddPlayerButton() // added
         );
         mainBox.alignmentProperty().set(Pos.TOP_CENTER);
-        return mainBox;
+
+        final ScrollPane scrollPane = new ScrollPane();
+        scrollPane.setContent(mainBox);
+        scrollPane.setFitToWidth(true);
+        return scrollPane;
     }
 
     /**
@@ -121,12 +127,18 @@ public class CreateGameBuilder extends MenuBuilder {
     @StudentImplementationRequired("H3.4")
     private Node createPlayerColorPicker(final Builder playerBuilder) {
         ColorPicker colorPicker = new ColorPicker();
+//        colorPicker.getCustomColors().setAll(Color.RED, Color.GREEN, Color.BLUE);
+        colorPicker.setValue(playerBuilder.getColor());
+//        colorPicker.
+        final ObjectProperty<Color> oldColorProperty = new SimpleObjectProperty<>(playerBuilder.getColor());
         colorPicker.setOnAction(event -> {
             Color colorPicked = colorPicker.getValue();
             List<Color> alreadyUsedColors = observablePlayers.stream().map(Builder::getColor).toList();
             if (alreadyUsedColors.contains(colorPicked)) {
                 alertColorAlreadyPicked().showAndWait();
+                colorPicker.setValue(oldColorProperty.get());
             } else {
+                oldColorProperty.set(colorPicked);
                 playerBuilder.color(colorPicked);
             }
         });
@@ -135,6 +147,7 @@ public class CreateGameBuilder extends MenuBuilder {
 
     /**
      * Creates an alert for when the color selected is already in use.
+     *
      * @return alert created.
      */
     @NotNull
