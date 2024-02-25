@@ -7,11 +7,13 @@ import org.tudalgo.algoutils.student.annotation.DoNotTouch;
 import org.tudalgo.algoutils.student.annotation.StudentImplementationRequired;
 import projekt.Config;
 import projekt.model.buildings.Edge;
+import projekt.model.buildings.Port;
 import projekt.model.buildings.Settlement;
 
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import static projekt.Config.*;
 
@@ -140,17 +142,25 @@ public class PlayerImpl implements Player {
         final int ANY_PORT_RATIO = 3;
         final int NO_PORT_RATIO = 4;
 
-        boolean hasAnyPort = false;
-        for (Edge road : getRoads().values()) {
-            if (!road.hasPort()) {
+        boolean hasNormalPort = false;
+        for (Port port :  getSettlements().stream().map(settlement->settlement.intersection()).map(intersection->intersection.getPort()).collect(Collectors.toSet())) {
+            if (port == null) {
                 continue;
             }
-            hasAnyPort = true;
-            if (road.getPort().resourceType().equals(resourceType)) {
-                return SPEZIAL_PORT_RATIO;
-            }
+
+
+                if (port.resourceType() == null) {
+                    hasNormalPort = true;
+                } else {
+                    if (resourceType.equals(port.resourceType())) { // changed by Jakob to fix trade bug
+                        return SPEZIAL_PORT_RATIO;
+                    }
+                }
+
+
         }
-        if (hasAnyPort) {
+
+        if (hasNormalPort) {
             return ANY_PORT_RATIO;
         }
         return NO_PORT_RATIO;

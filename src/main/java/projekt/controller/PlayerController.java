@@ -633,10 +633,11 @@ public class PlayerController {
      */
     @StudentImplementationRequired("H2.3")
     public void tradeWithBank(final ResourceType offerType, final int offerAmount, final ResourceType request)
+    //TODO changed by Jakob because the ratio is x amount of offered resources for one of request
     throws IllegalActionException {
-        int tradeRatio = player.getTradeRatio(request);
+        int tradeRatio = player.getTradeRatio(offerType);
         // the offered amount doesn't match the ratio, e.g., player offers 5, and his trade ratio is 4.
-        if ((offerAmount % player.getTradeRatio(request)) != 0) {
+        if ((offerAmount % player.getTradeRatio(offerType)) != 0) {
            throw new IllegalActionException("Offered amount and trade ratio doesn't match");
         }
 
