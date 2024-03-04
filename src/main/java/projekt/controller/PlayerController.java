@@ -333,7 +333,7 @@ public class PlayerController {
      *
      * @return whether the {@link Player} can build a village.
      */
-    @StudentImplementationRequired("H2.5")
+    @StudentImplementationRequired("H2.4")
     public boolean canBuildVillage() {
         // TODO: H2.4 check done
 
@@ -356,7 +356,7 @@ public class PlayerController {
      * @param intersection the intersection to build the village at
      * @throws IllegalActionException if the village cannot be built
      */
-    @StudentImplementationRequired("H2.5")
+    @StudentImplementationRequired("H2.4")
     public void buildVillage(final Intersection intersection) throws IllegalActionException {
         // TODO: H2.4 check done change
         if(intersection.hasSettlement()){ // checks if village is already built.
@@ -465,7 +465,7 @@ public class PlayerController {
      *
      * @return whether the {@link Player} can build a road.
      */
-    @StudentImplementationRequired("H2.5")
+    @StudentImplementationRequired("H2.4")
     public boolean canBuildRoad() {
         // TODO: H2.4 check done (maybe redo first Round exeption)
 
@@ -504,7 +504,7 @@ public class PlayerController {
      * @param position1 the second position to build the road between
      * @throws IllegalActionException if the road cannot be built
      */
-    @StudentImplementationRequired("H2.5")
+    @StudentImplementationRequired("H2.4")
     public void buildRoad(final TilePosition position0, final TilePosition position1) throws IllegalActionException {
         // TODO: H2.4 check done.
         Edge roadToBe =player.getHexGrid().getEdge(position0,position1);
@@ -634,20 +634,18 @@ public class PlayerController {
     @StudentImplementationRequired("H2.3")
     public void tradeWithBank(final ResourceType offerType, final int offerAmount, final ResourceType request)
     throws IllegalActionException {
-        int tradeRatio = player.getTradeRatio(request);
+        int tradeRatio = player.getTradeRatio(offerType);
         // the offered amount doesn't match the ratio, e.g., player offers 5, and his trade ratio is 4.
-        if ((offerAmount % player.getTradeRatio(request)) != 0) {
+        if ((offerAmount % player.getTradeRatio(offerType)) != 0) {
            throw new IllegalActionException("Offered amount and trade ratio doesn't match");
         }
 
-        Map<ResourceType, Integer> offerMap = new HashMap<>();
-        offerMap.put(offerType, offerAmount);
-        if (!player.hasResources(offerMap)) {
+        if (!player.hasResources(Map.of(offerType, offerAmount))) {
             throw new IllegalActionException("Player does not have the offered resources");
         }
 
         int numOfResourcesToReceive = offerAmount/tradeRatio;
-        player.removeResources(offerMap);
+        player.removeResource(offerType, offerAmount);
         player.addResource(request, numOfResourcesToReceive);
     }
 
@@ -727,7 +725,7 @@ public class PlayerController {
     @StudentImplementationRequired("H2.3")
     public void acceptTradeOffer(final boolean accepted) throws IllegalActionException {
         // überprüfen, ob das Angebot existiert
-        if (playerTradingOffer == null) {
+        if ( tradingPlayer == null || playerTradingOffer == null || playerTradingRequest == null) {
             throw new IllegalActionException("No trade offer to accept");
         }
         if (!accepted) {

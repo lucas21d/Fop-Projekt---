@@ -27,9 +27,14 @@ public enum PlayerObjective {
     SELECT_CARD_TO_STEAL(Set.of(StealCardAction.class, EndTurnAction.class)),
     // NEW
     SELECT_ROBBER_TILE(Set.of(SelectRobberTileAction.class)),
-    REGULAR_TURN(Set.of(BuildRoadAction.class, EndTurnAction.class, BuildVillageAction.class,
-                        UpgradeVillageAction.class, TradeAction.class, BuyDevelopmentCardAction.class,
-                        PlayDevelopmentCardAction.class
+    REGULAR_TURN(Set.of(
+        BuildRoadAction.class,
+        EndTurnAction.class,
+        BuildVillageAction.class,
+        UpgradeVillageAction.class,
+        TradeAction.class,
+        BuyDevelopmentCardAction.class,
+        PlayDevelopmentCardAction.class
     )),
     PLACE_VILLAGE(Set.of(BuildVillageAction.class)),
     PLACE_ROAD(Set.of(BuildRoadAction.class)),

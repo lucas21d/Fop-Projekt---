@@ -2,6 +2,7 @@ import org.sourcegrade.jagr.gradle.task.grader.GraderRunTask
 
 plugins {
     alias(libs.plugins.algomate)
+    alias(libs.plugins.jagr)
     alias(libs.plugins.javafxplugin)
 }
 
@@ -13,9 +14,9 @@ submission {
     // ACHTUNG!
     // Setzen Sie im folgenden Bereich Ihre TU-ID (NICHT Ihre Matrikelnummer!), Ihren Nachnamen und Ihren Vornamen
     // in Anführungszeichen (z.B. "ab12cdef" für Ihre TU-ID) ein!
-    studentId = null
-    firstName = null
-    lastName = null
+    studentId = "du62nuca"
+    firstName = "Diego Lucas"
+    lastName = "Untiveros Craveiro"
 
     // Optionally require own tests for mainBuildSubmission task. Default is false
     requireTests = false
@@ -50,9 +51,8 @@ jagr {
 }
 
 tasks {
-    withType<GraderRunTask> {
-        doFirst {
-            throw GradleException("Public tests will be released in the next few days.")
-        }
+    javadoc {
+        options.jFlags?.add("-Duser.language=en")
+        options.optionFiles = mutableListOf(project.file("src/main/javadoc.options"))
     }
 }
