@@ -35,7 +35,7 @@ public class MainMenuBuilder extends MenuBuilder {
         final Runnable quitHandler, final Runnable createGameScene, final Runnable loadSettingsScene,
         final Runnable loadHighscoreScene, final Runnable loadAboutScene
     ) {
-        super("Main Menu", "Quit", quitHandler);
+        super("Catan Armageddon", "Quit", quitHandler);
         this.loadGameScene = createGameScene;
         this.loadSettingsScene = loadSettingsScene;
         this.loadHighscoreScene = loadHighscoreScene;
@@ -45,6 +45,7 @@ public class MainMenuBuilder extends MenuBuilder {
     @Override
     protected Node initCenter() {
         final VBox mainBox = new VBox();
+
         mainBox.setAlignment(Pos.CENTER);
         mainBox.setSpacing(10);
 

@@ -85,6 +85,7 @@ public abstract class MenuBuilder implements Builder<Region> {
         root.setBottom(buttonBox);
 
         root.setCenter(initCenter());
+        root.getStylesheets().add("css/darkmode.css");
     }
 
     /**

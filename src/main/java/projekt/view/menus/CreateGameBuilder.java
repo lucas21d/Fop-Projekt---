@@ -10,7 +10,6 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import org.jetbrains.annotations.NotNull;
-import org.tudalgo.algoutils.student.Student;
 import org.tudalgo.algoutils.student.annotation.DoNotTouch;
 import org.tudalgo.algoutils.student.annotation.StudentImplementationRequired;
 import projekt.model.PlayerImpl;
@@ -52,8 +51,7 @@ public class CreateGameBuilder extends MenuBuilder {
     @Override
     protected Node initCenter() {
         final VBox mainBox = new VBox();
-        mainBox.setStyle("-fx-font-size: 2em");
-        // For icons see https://pictogrammers.com/library/mdi/
+        mainBox.setStyle("-fx-background-color: #2D2D30");
         final VBox playerListVBox = new VBox();
         this.observablePlayers.subscribe(() -> {
             playerListVBox.getChildren().clear();
@@ -97,9 +95,11 @@ public class CreateGameBuilder extends MenuBuilder {
         );
         mainBox.alignmentProperty().set(Pos.TOP_CENTER);
 
+
         final ScrollPane scrollPane = new ScrollPane();
         scrollPane.setContent(mainBox);
         scrollPane.setFitToWidth(true);
+        scrollPane.setFitToHeight(true);
         return scrollPane;
     }
 
@@ -168,9 +168,7 @@ public class CreateGameBuilder extends MenuBuilder {
     private Node createBotOrPlayerSelector(final Builder playerBuilder) {
         CheckBox checkboxBotSelected = new CheckBox("is bot?");
         checkboxBotSelected.setSelected(playerBuilder.isAi());
-        checkboxBotSelected.setOnAction(check -> {
-            playerBuilder.ai(checkboxBotSelected.isSelected());
-        });
+        checkboxBotSelected.setOnAction(check -> playerBuilder.ai(checkboxBotSelected.isSelected()));
         return checkboxBotSelected;
     }
 
