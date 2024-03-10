@@ -316,9 +316,9 @@ public class GameController {
     private void firstActions() {
         if (getActivePlayerController() == null) return;
 
-        /*for (ResourceType resourceType : ResourceType.values()) {
+        for (ResourceType resourceType : ResourceType.values()) {
             getActivePlayerController().getPlayer().addResource(resourceType, 20);
-        }*/
+        }
 
 
         for (int i = 0; i < 2; i++) {
@@ -394,11 +394,12 @@ public class GameController {
 
         if (numberOfResources <= 7) return;
 
-        playerController.setCardsToSelect((int) Math.floor(numberOfResources / 2.0)); //TODO this may need to be called elsewhere
-
         withActivePlayer(
             playerController,
-            () -> getActivePlayerController().waitForNextAction(DROP_CARDS));
+            () -> {
+                playerController.setCardsToSelect((int) Math.floor(numberOfResources / 2.0));
+                playerController.waitForNextAction(DROP_CARDS);
+            });
     }
 
     /**
