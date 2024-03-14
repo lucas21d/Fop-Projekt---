@@ -90,18 +90,9 @@ public class PlayerInformationBuilder implements Builder<Region> {
 
         final Label victoryPointsLabel = new Label(String.format("Your Victory Points: %d", player.getVictoryPoints()));
 
-        // nuclear strike
-        final Button nukeButton = new Button("Nuclear strike!");
-        nukeButton.setOnAction(event -> {
-            System.out.println("TILE PICKED:" + determineBestTileToAttack());
-            Tile tileToAttack = determineBestTileToAttack();
-            tileToAttack.getIntersections().forEach(intersection -> ((IntersectionImpl) intersection).downgradeSettlement(player));
-        });
-
         mainBox.getChildren().addAll(playerName, resourcesLabel, resourcesBox, developmentCardsLabel,
             developmentCardsBox, remainingRoadsLabel, remainingVillagesLabel, remainingCitiesLabel,
-            victoryPointsLabel,
-            nukeButton
+            victoryPointsLabel
         );
         mainBox.setPadding(new Insets(5));
         mainBox.setSpacing(5);
