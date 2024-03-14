@@ -345,24 +345,25 @@ public class GameController {
     ) {
         // offer trade to all players
         for (PlayerController playerController: playerControllers.values()) {
-            if (!playerController.canAcceptTradeOffer(offeringPlayer, offer)) {
+            if (playerController.getPlayer().equals(offeringPlayer)) {
                 continue;
             }
 
             playerController.setPlayerTradeOffer(offeringPlayer, offer, request);
             // read action from the player
-            PlayerAction playerAction = playerController.waitForNextAction(PlayerObjective.ACCEPT_TRADE);
+            PlayerAction playerAction = playerController.waitForNextAction(ACCEPT_TRADE);
             if (playerAction instanceof AcceptTradeAction tradeAction) {
                 try {
-                    // accept the offer and break, so that the other players don't receive the offer
-                    if (tradeAction.accepted()) {
-                        playerController.acceptTradeOffer(true);
-                        break;
-                    }
+                    playerController.acceptTradeOffer(tradeAction.accepted());
                     playerController.resetPlayerTradeOffer();
+                    break;
+                    //  so that the other players don't receive the offer is it has been already been accepted?
                 } catch (IllegalActionException ignored) {
                 }
             }
+        }
+        for (PlayerController playerController: playerControllers.values()) {
+            playerController.setPlayerObjective(IDLE);
         }
         setActivePlayerControllerProperty(offeringPlayer);
     }
