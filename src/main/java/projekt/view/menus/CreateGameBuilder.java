@@ -3,11 +3,11 @@ package projekt.view.menus;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.ObservableList;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.*;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import org.jetbrains.annotations.NotNull;
 import org.tudalgo.algoutils.student.annotation.DoNotTouch;
@@ -51,7 +51,11 @@ public class CreateGameBuilder extends MenuBuilder {
     @Override
     protected Node initCenter() {
         final VBox mainBox = new VBox();
-        mainBox.setStyle("-fx-background-color: #2D2D30");
+        mainBox.setStyle("-fx-background-color: #2D2D30; background-color: #2D2D30; -fx-fill-height: true");
+//        BackgroundFill backgroundFill = new BackgroundFill(Color.BLACK, CornerRadii.EMPTY, javafx.geometry.Insets.EMPTY);
+//        Background background = new Background(backgroundFill);
+//        mainBox.setBackground(background);
+
         final VBox playerListVBox = new VBox();
         this.observablePlayers.subscribe(() -> {
             playerListVBox.getChildren().clear();
@@ -72,10 +76,12 @@ public class CreateGameBuilder extends MenuBuilder {
                 playerListingHBox.getChildren().addAll(
                     playerNameTextField
                 );
-                playerListVBox.getChildren().add(playerListingHBox);
-                playerListVBox.getChildren().add(createRemovePlayerButton(playerBuilder.getId())); // added
-                playerListVBox.getChildren().add(createPlayerColorPicker(playerBuilder)); // added
-                playerListVBox.getChildren().add(createBotOrPlayerSelector(playerBuilder)); // added
+                playerListVBox.getChildren().addAll(
+                    playerListingHBox,
+                    createRemovePlayerButton(playerBuilder.getId()),
+                    createPlayerColorPicker(playerBuilder),
+                    createBotOrPlayerSelector(playerBuilder)
+                );
             }
         });
 
@@ -87,19 +93,22 @@ public class CreateGameBuilder extends MenuBuilder {
             }
         });
 
+        Region spacer = new Region();
+        spacer.setPrefHeight(375);
+
         mainBox.getChildren().addAll(
             playerListVBox,
             startGameButton,
             startGameErrorLabel,
-            createAddPlayerButton() // added
+            createAddPlayerButton(),
+            spacer
         );
+
         mainBox.alignmentProperty().set(Pos.TOP_CENTER);
-
-
         final ScrollPane scrollPane = new ScrollPane();
+//        scrollPane.setFitToHeight(true);
         scrollPane.setContent(mainBox);
         scrollPane.setFitToWidth(true);
-        scrollPane.setFitToHeight(true);
         return scrollPane;
     }
 

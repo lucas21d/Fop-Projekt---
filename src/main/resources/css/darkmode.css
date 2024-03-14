@@ -7,32 +7,33 @@
 */
 
 .root{
-    -fx-background-color: #2D2D30;
-    background-color: #2D2D30;
-    -fx-font-size: 22px;
+-fx-background-color: #2D2D30;
+background-color: #2D2D30;
+-fx-font-size: 2em;
 }
 
 
 /* Label */
 .label{
-    -fx-text-fill: #AFB1B3;
+-fx-text-fill: #AFB1B3;
 }
 
 
 /* Pane */
 .pane-grid{
-    -fx-background-color: #2D2D30;
-    background-color: #2D2D30;
+-fx-background-color: #2D2D30;
+background-color: #2D2D30;
 }
 
-.vbox {
-    -fx-background-color: #2D2D30;
-    background-color: #2D2D30;
-}
+/*.vbox {*/
+/*    -fx-background-color: #2D2D30;*/
+/*    background-color: #2D2D30;*/
+/*}*/
 
 .scroll-pane {
     -fx-background-color: #2D2D30;
     background-color: #2D2D30;
+    /*-fx-fill-height: true;*/
 }
 
 /* GridPane */

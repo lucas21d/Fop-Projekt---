@@ -84,8 +84,10 @@ public abstract class MenuBuilder implements Builder<Region> {
 
         root.setBottom(buttonBox);
 
-        root.setCenter(initCenter());
         root.getStylesheets().add("css/darkmode.css");
+////        mainBox.setStyle("-fx-background-color: #2D2D30; background-color: #2D2D30; -fx-fill-height: true");
+//        root.setStyle("-fx-background-color: #2D2D30; background-color: #2D2D30;") ;
+        root.setCenter(initCenter());
     }
 
     /**
