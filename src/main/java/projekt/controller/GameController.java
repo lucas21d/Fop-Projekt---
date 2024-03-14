@@ -319,11 +319,6 @@ public class GameController {
     private void firstActions() {
         if (getActivePlayerController() == null) return;
 
-        for (ResourceType resourceType : ResourceType.values()) {
-            getActivePlayerController().getPlayer().addResource(resourceType, 20);
-        }
-
-
         for (int i = 0; i < 2; i++) {
             getActivePlayerController().waitForNextAction(PLACE_VILLAGE);
             getActivePlayerController().waitForNextAction(PLACE_ROAD);
